@@ -9,7 +9,7 @@ from idlelib.tooltip import Hovertip
 ######################################################################################
 
 
-def btn_execute():
+def generate_scripts():
 
     folder_path = tbx_dir.get("1.0", "end-1c")
     input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
@@ -88,7 +88,7 @@ txt_dir = Label(root, text="Diretório:", bg='white', fg='black', justify=LEFT, 
 tbx_dir = Text(root, height=1, width=30, bg='light yellow')
 txt_table = Label(root, text="Nome da Tabela:", bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
-btn_exec = Button(root, text="Executar", width=15, command=lambda: btn_execute())
+btn_exec = Button(root, text="Executar", width=15, command=lambda: generate_scripts())
 txt_version = Label(root, text="v0.0.1", bg='white', fg='black', justify=RIGHT, anchor='e')
 
 # Associando widgets à janela principal
