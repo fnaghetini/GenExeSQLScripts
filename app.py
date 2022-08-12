@@ -23,7 +23,7 @@ def generate_scripts():
         for file in input_files_list:
 
             # Tabela como DataFrame
-            table = pd.read_csv(file, sep=',', header=0)
+            table = pd.read_csv(file, sep=',', header=0, dtype=str)
 
             # Colunas
             cols_list = [f'[{col}],' for col in table.columns]
