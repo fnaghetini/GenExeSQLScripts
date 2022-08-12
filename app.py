@@ -207,7 +207,7 @@ def insert_data():
         conn.close()
 
         messagebox.showinfo('Processo Concluído',
-                            f'{len(input_scripts_list)} executado(s) com sucesso no banco {database}!')
+                            f'{len(input_scripts_list)} script(s) executado(s) com sucesso no banco {database}!')
 
 
 ######################################################################################
@@ -235,10 +235,10 @@ tbx_dir1 = Text(root, height=1, width=30, bg='light yellow')
 txt_table = Label(root, text="Nome da Tabela:",
                   width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
-btn_insert_scripts = Button(root, text="Gerar INSERT Scripts",
+btn_insert_scripts = Button(root, text="Gerar INSERT Script(s)",
                             width=20, justify=CENTER,
                             command=lambda: insert_scripts())
-btn_update_scripts = Button(root, text="Gerar UPDATE Scripts",
+btn_update_scripts = Button(root, text="Gerar UPDATE Script(s)",
                             width=20, justify=CENTER,
                             command=lambda: update_scripts())
 
@@ -253,7 +253,7 @@ tbx_server = Text(root, height=1, width=30, bg='light yellow')
 txt_db = Label(root, text="Banco de Dados:",
                width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_db = Text(root, height=1, width=30, bg='light yellow')
-btn_insert_data = Button(root, text="Executar Scripts",
+btn_insert_data = Button(root, text="Executar Script(s)",
                          width=20, justify=CENTER, command=lambda: insert_data())
 txt_version = Label(root, text="v0.0.3", bg='white', fg='black', justify=RIGHT, anchor='e')
 
