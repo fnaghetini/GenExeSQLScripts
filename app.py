@@ -167,38 +167,47 @@ def update_scripts():
 
 def insert_data():
 
-    server = tbx_server.get("1.0", "end-1c")
-    database = tbx_db.get("1.0", "end-1c")
-
-    # Dados de conexão
-    conn_data = (
-        "Driver={SQL Server};"
-        f"Server={server};"
-        f"Database={database};"
-        "Trusted_Connection=yes;"
-    )
-
-    # Conexão com o SQL Server
-    conn = odbc.connect(conn_data)
-    messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
-
     folder_path = tbx_dir2.get("1.0", "end-1c")
     input_scripts_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.sql")]
 
-    count = 1
+    server = tbx_server.get("1.0", "end-1c")
+    database = tbx_db.get("1.0", "end-1c")
 
-    for script_file in input_scripts_list:
-        with open(script_file, 'r') as inserts:
-            script = inserts.read()
-            for statement in script.split(';'):
-                with conn.cursor() as cursor:
-                    cursor.execute(statement)
+    if folder_path == '' or server == '' or database == '':
+        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
+    elif len(input_scripts_list) == 0:
+        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+    else:
 
-        print(f"Script {path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
+        # Dados de conexão
+        conn_data = (
+            "Driver={SQL Server};"
+            f"Server={server};"
+            f"Database={database};"
+            "Trusted_Connection=yes;"
+        )
 
-        count += 1
+        # Conexão com o SQL Server
+        conn = odbc.connect(conn_data)
+        messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
 
-    conn.close()
+        count = 1
+
+        for script_file in input_scripts_list:
+            with open(script_file, 'r') as inserts:
+                script = inserts.read()
+                for statement in script.split(';'):
+                    with conn.cursor() as cursor:
+                        cursor.execute(statement)
+
+            print(f"Script {path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
+
+            count += 1
+
+        conn.close()
+
+        messagebox.showinfo('Processo Concluído',
+                            f'{len(input_scripts_list)} executado(s) com sucesso no banco {database}!')
 
 
 ######################################################################################
