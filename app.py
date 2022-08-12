@@ -182,21 +182,19 @@ def insert_data():
     conn = odbc.connect(conn_data)
     messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
 
-    # Criação do cursor
-    cursor = conn.cursor()
-
     folder_path = tbx_dir2.get("1.0", "end-1c")
     input_scripts_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.sql")]
 
     count = 1
 
     for script_file in input_scripts_list:
-        script = open(script_file, 'r')
-        cursor.execute(script.readlines())
-        cursor.commit()
+        with open(script_file, 'r') as inserts:
+            script = inserts.read()
+            for statement in script.split(';'):
+                with conn.cursor() as cursor:
+                    cursor.execute(statement)
 
         print(f"Script {path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
-        script.close()
 
         count += 1
 
