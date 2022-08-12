@@ -9,11 +9,11 @@ from idlelib.tooltip import Hovertip
 ######################################################################################
 
 
-def generate_scripts():
+def insert_scripts():
 
     folder_path = tbx_dir1.get("1.0", "end-1c")
     input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
-    insert_table = tbx_table.get("1.0", "end-1c")
+    input_table = tbx_table.get("1.0", "end-1c")
 
     if folder_path == '':
         messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
@@ -31,7 +31,7 @@ def generate_scripts():
 
             # Criação do 1° script SQL
             n_script = 1
-            script = open(f"{file[:-4]}_pt0{str(n_script)}.sql", 'w+')
+            script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
 
             # Loop
             for i in range(len(table)):
@@ -40,18 +40,18 @@ def generate_scripts():
                     n_script += 1
                     script.close()
 
-                    script = open(f"{file[:-4]}_pt0{str(n_script)}.sql", 'w+')
+                    script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
 
                     values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
                     values_str = ''.join(map(str, values_list))[:-1]
-                    row = f"INSERT INTO {insert_table} ({cols_str}) values ({values_str});\n"
+                    row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
                     script.write(row)
 
                 elif i == len(table):
                     values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
                     values_str = ''.join(map(str, values_list))[:-1]
 
-                    row = f"INSERT INTO {insert_table} ({cols_str}) values ({values_str});\n"
+                    row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
                     script.write(row)
 
                     script.close()
@@ -60,10 +60,67 @@ def generate_scripts():
                     values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
                     values_str = ''.join(map(str, values_list))[:-1]
 
-                    row = f"INSERT INTO {insert_table} ({cols_str}) values ({values_str});\n"
+                    row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
                     script.write(row)
 
-    messagebox.showinfo('Processo Concluído', f'Script(s) gerado(s) com sucesso na pasta {folder_path}.')
+    messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
+
+
+def update_scripts():
+
+    folder_path = tbx_dir1.get("1.0", "end-1c")
+    input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
+    input_table = tbx_table.get("1.0", "end-1c")
+
+    if folder_path == '':
+        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
+    elif len(input_files_list) == 0:
+        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+    else:
+        for file in input_files_list:
+
+            # Tabela como DataFrame
+            table = pd.read_csv(file, sep=',', header=0, dtype=str)
+
+            # Colunas
+            cols_list = [f'[{col}],' for col in table.columns]
+            cols_str = ''.join(map(str, cols_list))[:-1]
+
+            # Criação do 1° script SQL
+            n_script = 1
+            script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
+
+            # Loop
+            for i in range(len(table)):
+
+                if i != 0 and i != len(table) and i % 20000 == 0:
+                    n_script += 1
+                    script.close()
+
+                    script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
+
+                    values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
+                    values_str = ''.join(map(str, values_list))[:-1]
+                    row = f"UPDATE {input_table} ({cols_str}) values ({values_str});\n"
+                    script.write(row)
+
+                elif i == len(table):
+                    values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
+                    values_str = ''.join(map(str, values_list))[:-1]
+
+                    row = f"UPDATE {input_table} ({cols_str}) values ({values_str});\n"
+                    script.write(row)
+
+                    script.close()
+
+                else:
+                    values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
+                    values_str = ''.join(map(str, values_list))[:-1]
+
+                    row = f"UPDATE {input_table} ({cols_str}) values ({values_str});\n"
+                    script.write(row)
+
+    messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
 def insert_data():
@@ -87,12 +144,12 @@ root.geometry("380x430")
 root.configure(background='white')
 
 # Widgets
-txt_title1 = Label(root, text="Geração de INSERT Scripts", bg='white', fg='black', font="lucida 12 bold")
+txt_title1 = Label(root, text="Geração de Scripts SQL", bg='white', fg='black', font="lucida 12 bold")
 txt_dir1 = Label(root, text="Diretório:", bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_dir1 = Text(root, height=1, width=30, bg='light yellow')
 txt_table = Label(root, text="Nome da Tabela:", bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
-btn_generate_scripts = Button(root, text="Gerar Scripts", width=20, command=lambda: generate_scripts())
+btn_generate_scripts = Button(root, text="Gerar Scripts", width=20, command=lambda: insert_scripts())
 
 txt_title2 = Label(root, text="Inserção dos Dados no Banco", bg='white', fg='black', font="lucida 12 bold")
 txt_dir2 = Label(root, text="Diretório:", bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
