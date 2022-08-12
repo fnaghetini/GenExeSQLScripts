@@ -128,7 +128,7 @@ def update_scripts():
             # Loop
             for i in range(len(table)):
 
-                if i != 0 and i != len(table) and i % 20000 == 0:
+                if i != 0 and i != len(table) and i % 10000 == 0:
                     n_script += 1
                     script.close()
 
