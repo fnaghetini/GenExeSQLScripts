@@ -52,8 +52,7 @@ def __get_update_values_cols_str(table, row_idx, cols_list):
 
 
 def __get_update_script_row(input_table, cols_values_str, table, row_idx):
-    row = f"""UPDATE {input_table} SET {cols_values_str}
-              WHERE sample_number = '{table.loc[row_idx, 'sample_number']}';\n"""
+    row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE sample_number = '{table.loc[row_idx, 'sample_number']}';\n"""
     return row
 
 
