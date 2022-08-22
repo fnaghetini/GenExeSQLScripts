@@ -40,3 +40,16 @@ def __get_insert_script_row(input_table, cols_str, values_str):
     row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
     return row
 
+
+def __get_update_values_cols_str(table, row_idx, cols_list):
+    values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[row_idx, :]]
+    cols_values_list = [f"{col} = {value}" for col, value in zip(cols_list, values_list)]
+    cols_values_str = ''.join(map(str, cols_values_list))[:-1]
+    return cols_values_str
+
+
+def __get_update_script_row(input_table, cols_values_str, table, row_idx):
+    row = f"""UPDATE {input_table} SET {cols_values_str}
+              WHERE sample_number = '{table.loc[row_idx, 'sample_number']}';\n"""
+    return row
+
