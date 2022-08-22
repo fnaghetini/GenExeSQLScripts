@@ -5,8 +5,10 @@ from tkinter import messagebox
 from idlelib.tooltip import Hovertip
 import pyodbc as odbc
 
-# funções auxiliares
-from src import path_leaf
+# Funções Auxiliares
+from src import __get_path_leaf
+from src import __get_cols_str
+from src import __get_date_cols_index
 
 
 ######################################################################################
@@ -27,13 +29,14 @@ def insert_scripts():
     else:
         for file in input_files_list:
 
-            # Tabela como DataFrame
+            # Importação da tabela
             table = pd.read_csv(file, sep=',', header=0, dtype=str)
 
-            # Colunas
-            cols_list = [f'[{col}],' for col in table.columns]
-            cols_str = ''.join(map(str, cols_list))[:-1]
-            date_imported_index = [i for i, col in enumerate(list(table.columns)) if col == 'date_imported'][0]
+            # Definição da string de colunas
+            cols_str = __get_cols_str(table)
+
+            # Identificação dos índices das colunas de data
+            date_cols_idxs = __get_date_cols_index(table)
 
             # Criação do 1° script SQL
             n_script = 1
@@ -43,8 +46,8 @@ def insert_scripts():
             for i in range(len(table)):
 
                 if i != 0 and i != len(table) and i % 20000 == 0:
-                    n_script += 1
                     script.close()
+                    n_script += 1
 
                     script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
 
@@ -53,7 +56,7 @@ def insert_scripts():
                         if pd.isna(value):
                             values_list.append("NULL,")
                         else:
-                            if col_idx == date_imported_index:
+                            if col_idx in date_cols_idxs:
                                 values_list.append(f"CONVERT(DATETIME,'{value}',102),")
                             else:
                                 values_list.append(f"'{value}',")
@@ -71,7 +74,7 @@ def insert_scripts():
                         if pd.isna(value):
                             values_list.append("NULL,")
                         else:
-                            if col_idx == date_imported_index:
+                            if col_idx in date_cols_idxs:
                                 values_list.append(f"CONVERT(DATETIME,'{value}',102),")
                             else:
                                 values_list.append(f"'{value}',")
@@ -88,7 +91,7 @@ def insert_scripts():
                         if pd.isna(value):
                             values_list.append("NULL,")
                         else:
-                            if col_idx == date_imported_index:
+                            if col_idx in date_cols_idxs:
                                 values_list.append(f"CONVERT(DATETIME,'{value}',102),")
                             else:
                                 values_list.append(f"'{value}',")
@@ -198,7 +201,7 @@ def insert_data():
                     with conn.cursor() as cursor:
                         cursor.execute(statement)
 
-            print(f"Script {path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
+            print(f"Script {__get_path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
 
             count += 1
 
