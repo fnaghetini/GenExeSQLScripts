@@ -7,9 +7,9 @@ import pyodbc as odbc
 
 # Funções Auxiliares
 from src import __get_path_leaf
-from src import __get_cols_str
-from src import __get_values_str
-from src import __get_script_row
+from src import __get_insert_cols_str
+from src import __get_insert_values_str
+from src import __get_insert_script_row
 
 
 ######################################################################################
@@ -34,7 +34,7 @@ def insert_scripts():
             table = pd.read_csv(file, sep=',', header=0, dtype=str)
 
             # Definição da string de colunas
-            cols_str = __get_cols_str(table)
+            cols_str = __get_insert_cols_str(table)
 
             # Criação do 1° script SQL
             n_script = 1
@@ -48,23 +48,23 @@ def insert_scripts():
                     n_script += 1
 
                     script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
-                    values_str = __get_values_str(table, i, input_table, cols_str)
-                    row = __get_script_row(input_table, cols_str, values_str)
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
 
                 elif i == len(table):
-                    values_str = __get_values_str(table, i, input_table, cols_str)
-                    row = __get_script_row(input_table, cols_str, values_str)
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
 
                     script.close()
 
                 else:
-                    values_str = __get_values_str(table, i, input_table, cols_str)
-                    row = __get_script_row(input_table, cols_str, values_str)
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
 
-    messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
+        messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
 def update_scripts():
@@ -80,20 +80,20 @@ def update_scripts():
     else:
         for file in input_files_list:
 
-            # Tabela como DataFrame
+            # Importação da tabela
             table = pd.read_csv(file, sep=',', header=0, dtype=str)
 
-            # Colunas
+            # Definição da string de colunas
             cols_list = list(table.columns)
 
             # Criação do 1° script SQL
             n_script = 1
             script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
 
-            # Loop
+            # Iteração sobre as linhas da tabela
             for i in range(len(table)):
 
-                if i != 0 and i != len(table) and i % 10000 == 0:
+                if i not in [0, len(table)] and i % 10000 == 0:
                     n_script += 1
                     script.close()
 
@@ -127,7 +127,7 @@ def update_scripts():
                               WHERE sample_number = '{table.loc[i, 'sample_number']}';\n"""
                     script.write(row)
 
-    messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
+        messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
 def insert_data():

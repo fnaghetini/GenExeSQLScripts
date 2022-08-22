@@ -7,7 +7,7 @@ def __get_path_leaf(path):
     return tail or ntpath.basename(head)
 
 
-def __get_cols_str(table):
+def __get_insert_cols_str(table):
     cols_list = [f'[{col}],' for col in table.columns]
     cols_str = ''.join(map(str, cols_list))[:-1]
     return cols_str
@@ -20,7 +20,7 @@ def __get_date_cols_index(table):
     return date_cols_idxs
 
 
-def __get_values_str(table, row_idx, input_table, cols_str):
+def __get_insert_values_str(table, row_idx):
     date_cols_idxs = __get_date_cols_index(table)
     values_list = []
 
@@ -36,7 +36,7 @@ def __get_values_str(table, row_idx, input_table, cols_str):
     return values_str
 
 
-def __get_script_row(input_table, cols_str, values_str):
+def __get_insert_script_row(input_table, cols_str, values_str):
     row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
     return row
 
