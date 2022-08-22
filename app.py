@@ -8,7 +8,8 @@ import pyodbc as odbc
 # Funções Auxiliares
 from src import __get_path_leaf
 from src import __get_cols_str
-from src import __get_date_cols_index
+from src import __get_values_str
+from src import __get_script_row
 
 
 ######################################################################################
@@ -35,69 +36,32 @@ def insert_scripts():
             # Definição da string de colunas
             cols_str = __get_cols_str(table)
 
-            # Identificação dos índices das colunas de data
-            date_cols_idxs = __get_date_cols_index(table)
-
             # Criação do 1° script SQL
             n_script = 1
             script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
 
-            # Loop
+            # Iteração sobre as linhas da tabela
             for i in range(len(table)):
 
-                if i != 0 and i != len(table) and i % 20000 == 0:
+                if i not in [0, len(table)] and i % 20000 == 0:
                     script.close()
                     n_script += 1
 
                     script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
-
-                    values_list = []
-                    for col_idx, value in enumerate(table.iloc[i, :]):
-                        if pd.isna(value):
-                            values_list.append("NULL,")
-                        else:
-                            if col_idx in date_cols_idxs:
-                                values_list.append(f"CONVERT(DATETIME,'{value}',102),")
-                            else:
-                                values_list.append(f"'{value}',")
-                    values_str = ''.join(map(str, values_list))[:-1]
-
-                    row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
+                    values_str = __get_values_str(table, i, input_table, cols_str)
+                    row = __get_script_row(input_table, cols_str, values_str)
                     script.write(row)
 
                 elif i == len(table):
-                    # values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[i, :]]
-                    # values_str = ''.join(map(str, values_list))[:-1]
-
-                    values_list = []
-                    for col_idx, value in enumerate(table.iloc[i, :]):
-                        if pd.isna(value):
-                            values_list.append("NULL,")
-                        else:
-                            if col_idx in date_cols_idxs:
-                                values_list.append(f"CONVERT(DATETIME,'{value}',102),")
-                            else:
-                                values_list.append(f"'{value}',")
-                    values_str = ''.join(map(str, values_list))[:-1]
-
-                    row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
+                    values_str = __get_values_str(table, i, input_table, cols_str)
+                    row = __get_script_row(input_table, cols_str, values_str)
                     script.write(row)
 
                     script.close()
 
                 else:
-                    values_list = []
-                    for col_idx, value in enumerate(table.iloc[i, :]):
-                        if pd.isna(value):
-                            values_list.append("NULL,")
-                        else:
-                            if col_idx in date_cols_idxs:
-                                values_list.append(f"CONVERT(DATETIME,'{value}',102),")
-                            else:
-                                values_list.append(f"'{value}',")
-                    values_str = ''.join(map(str, values_list))[:-1]
-
-                    row = f"INSERT INTO {input_table} ({cols_str}) values ({values_str});\n"
+                    values_str = __get_values_str(table, i, input_table, cols_str)
+                    row = __get_script_row(input_table, cols_str, values_str)
                     script.write(row)
 
     messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
