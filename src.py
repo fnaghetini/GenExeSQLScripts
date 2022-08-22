@@ -16,7 +16,7 @@ def __get_insert_cols_str(table):
 def __get_date_cols_index(table):
     date_cols = ['analysis_date', 'date_shipped', 'sampling_date', 'date_plan',
                  'date_shipped', 'date_imported', 'date_received']
-    date_cols_idxs = [i for i, col in enumerate(list(table.columns)) if col in date_cols][0]
+    date_cols_idxs = [i for i, col in enumerate(list(table.columns)) if col in date_cols]
     return date_cols_idxs
 
 
