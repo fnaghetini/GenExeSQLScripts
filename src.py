@@ -1,5 +1,7 @@
 import ntpath
 import pandas as pd
+from glob import glob
+from tkinter import messagebox
 
 
 def __get_path_leaf(path):
@@ -52,4 +54,46 @@ def __get_update_script_row(input_table, cols_values_str, table, row_idx):
     row = f"""UPDATE {input_table} SET {cols_values_str}
               WHERE sample_number = '{table.loc[row_idx, 'sample_number']}';\n"""
     return row
+
+
+def insert_scripts(tbx_dir, tbx_table):
+
+    folder_path = tbx_dir.get("1.0", "end-1c")
+    input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
+    input_table = tbx_table.get("1.0", "end-1c")
+
+    if folder_path == '':
+        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
+    elif len(input_files_list) == 0:
+        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+    else:
+        for file in input_files_list:
+            # Importação da tabela
+            table = pd.read_csv(file, sep=',', header=0, dtype=str)
+            # Definição do comando SQL
+            cols_str = __get_insert_cols_str(table)
+            # Criação do 1° script SQL
+            n_script = 1
+            script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
+
+            # Iteração sobre as linhas da tabela
+            for i in range(len(table)):
+                if i not in [0, len(table)] and i % 20000 == 0:
+                    script.close()
+                    n_script += 1
+                    script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
+                    script.write(row)
+                elif i == len(table):
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
+                    script.write(row)
+                    script.close()
+                else:
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
+                    script.write(row)
+        messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
+
 
