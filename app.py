@@ -1,4 +1,3 @@
-import ntpath
 from tkinter import *
 from glob import glob
 import pandas as pd
@@ -6,14 +5,13 @@ from tkinter import messagebox
 from idlelib.tooltip import Hovertip
 import pyodbc as odbc
 
+# funções auxiliares
+from src import path_leaf
+
+
 ######################################################################################
 # ------------------------------------- Funções ------------------------------------ #
 ######################################################################################
-
-
-def path_leaf(path):
-    head, tail = ntpath.split(path)
-    return tail or ntpath.basename(head)
 
 
 def insert_scripts():
