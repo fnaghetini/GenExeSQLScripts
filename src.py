@@ -2,6 +2,7 @@ import ntpath
 import pandas as pd
 from glob import glob
 from tkinter import messagebox
+import pyodbc as odbc
 
 
 def __get_path_leaf(path):
@@ -97,7 +98,6 @@ def insert_scripts(tbx_dir, tbx_table):
 
 
 def update_scripts(tbx_dir, tbx_table):
-
     folder_path = tbx_dir.get("1.0", "end-1c")
     input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
     input_table = tbx_table.get("1.0", "end-1c")
@@ -135,3 +135,44 @@ def update_scripts(tbx_dir, tbx_table):
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
         messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
+
+
+def insert_data_into_db(tbx_dir, tbx_server, tbx_db):
+    folder_path = tbx_dir.get("1.0", "end-1c")
+    input_scripts_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.sql")]
+
+    server = tbx_server.get("1.0", "end-1c")
+    database = tbx_db.get("1.0", "end-1c")
+
+    if folder_path == '' or server == '' or database == '':
+        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
+    elif len(input_scripts_list) == 0:
+        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+    else:
+        # Dados de conexão
+        conn_data = (
+            "Driver={SQL Server};"
+            f"Server={server};"
+            f"Database={database};"
+            "Trusted_Connection=yes;"
+        )
+        # Conexão com o SQL Server
+        conn = odbc.connect(conn_data)
+        messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
+        count = 1
+
+        for script_file in input_scripts_list:
+            with open(script_file, 'r') as inserts:
+                script = inserts.read()
+                for statement in script.split(';'):
+                    with conn.cursor() as cursor:
+                        cursor.execute(statement)
+
+            print(f"Script {__get_path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
+
+            count += 1
+
+        conn.close()
+
+        messagebox.showinfo('Processo Concluído',
+                            f'{len(input_scripts_list)} script(s) executado(s) com sucesso no banco {database}!')
