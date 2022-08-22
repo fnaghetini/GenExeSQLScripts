@@ -35,8 +35,6 @@ def insert_scripts():
             table = pd.read_csv(file, sep=',', header=0, dtype=str)
             # Definição do comando SQL
             cols_str = __get_insert_cols_str(table)
-            values_str = __get_insert_values_str(table, i)
-            row = __get_insert_script_row(input_table, cols_str, values_str)
             # Criação do 1° script SQL
             n_script = 1
             script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
@@ -47,6 +45,8 @@ def insert_scripts():
                     script.close()
                     n_script += 1
                     script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
+                    values_str = __get_insert_values_str(table, i)
+                    row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                 elif i == len(table):
                     values_str = __get_insert_values_str(table, i)
@@ -76,8 +76,6 @@ def update_scripts():
             table = pd.read_csv(file, sep=',', header=0, dtype=str)
             # Definição do comando SQL
             cols_list = list(table.columns)
-            cols_values_str = __get_update_values_cols_str(table, i, cols_list)
-            row = __get_update_script_row(input_table, cols_values_str, table, i)
             # Criação do 1° script SQL
             n_script = 1
             script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
@@ -88,11 +86,17 @@ def update_scripts():
                     n_script += 1
                     script.close()
                     script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
+                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
+                    row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
                 elif i == len(table):
+                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
+                    row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
                     script.close()
                 else:
+                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
+                    row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
         messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
