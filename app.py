@@ -4,59 +4,13 @@ from tkinter import messagebox
 from idlelib.tooltip import Hovertip
 import pyodbc as odbc
 
-# Funções Auxiliares
-from src import __get_path_leaf
-from src import __get_insert_cols_str
-from src import __get_insert_values_str
-from src import __get_insert_script_row
-from src import __get_update_values_cols_str
-from src import __get_update_script_row
-
+# Funções dos botões
+from src import insert_scripts
+from src import update_scripts
 
 ######################################################################################
 # ------------------------------------- Funções ------------------------------------ #
 ######################################################################################
-
-
-def update_scripts():
-
-    folder_path = tbx_dir1.get("1.0", "end-1c")
-    input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
-    input_table = tbx_table.get("1.0", "end-1c")
-
-    if folder_path == '':
-        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
-    elif len(input_files_list) == 0:
-        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
-    else:
-        for file in input_files_list:
-            # Importação da tabela
-            table = pd.read_csv(file, sep=',', header=0, dtype=str)
-            # Definição do comando SQL
-            cols_list = list(table.columns)
-            # Criação do 1° script SQL
-            n_script = 1
-            script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
-
-            # Iteração sobre as linhas da tabela
-            for i in range(len(table)):
-                if i not in [0, len(table)] and i % 10000 == 0:
-                    n_script += 1
-                    script.close()
-                    script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
-                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
-                    row = __get_update_script_row(input_table, cols_values_str, table, i)
-                    script.write(row)
-                elif i == len(table):
-                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
-                    row = __get_update_script_row(input_table, cols_values_str, table, i)
-                    script.write(row)
-                    script.close()
-                else:
-                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
-                    row = __get_update_script_row(input_table, cols_values_str, table, i)
-                    script.write(row)
-        messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
 def insert_data():
@@ -128,7 +82,7 @@ txt_table = Label(root, text="Nome da Tabela:",
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
 btn_insert_scripts = Button(root, text="Gerar INSERT Script(s)",
                             width=20, justify=CENTER,
-                            command=lambda: insert_scripts())
+                            command=lambda: insert_scripts(tbx_dir1, tbx_table)
 btn_update_scripts = Button(root, text="Gerar UPDATE Script(s)",
                             width=20, justify=CENTER,
                             command=lambda: update_scripts())
