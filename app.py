@@ -23,38 +23,32 @@ root.geometry("500x370")
 # Configuração de background
 root.configure(background='white')
 
-# Widgets
-txt_title1 = Label(root, text="Geração de Scripts SQL",
-                   bg='white', fg='black', font="lucida 12 bold")
-txt_dir1 = Label(root, text="Diretório dos CSVs:",
-                 width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
+# Criação dos widgets - Geração de Scripts SQL
+txt_title1 = Label(root, text="Geração de Scripts SQL", bg='white', fg='black', font="lucida 12 bold")
+txt_dir1 = Label(root, text="Diretório CSVs:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_dir1 = Text(root, height=1, width=30, bg='light yellow')
-txt_table = Label(root, text="Nome da Tabela:",
-                  width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
+txt_table = Label(root, text="Nome da Tabela:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
-btn_insert_scripts = Button(root, text="Gerar INSERT Script(s)",
-                            width=20, justify=CENTER,
+
+btn_insert_scripts = Button(root, text="Gerar INSERT Script(s)", width=20, justify=CENTER,
                             command=lambda: insert_scripts(tbx_dir1, tbx_table))
-btn_update_scripts = Button(root, text="Gerar UPDATE Script(s)",
-                            width=20, justify=CENTER,
+btn_update_scripts = Button(root, text="Gerar UPDATE Script(s)", width=20, justify=CENTER,
                             command=lambda: update_scripts(tbx_dir1, tbx_table))
 
-txt_title2 = Label(root, text="Execução de Scripts SQL",
-                   bg='white', fg='black', font="lucida 12 bold")
-txt_dir2 = Label(root, text="Diretório dos Scripts SQL:",
-                 width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
+# Criação dos widgets - Execução de Scripts SQL
+txt_title2 = Label(root, text="Execução de Scripts SQL", bg='white', fg='black', font="lucida 12 bold")
+txt_dir2 = Label(root, text="Diretório Scripts SQL:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_dir2 = Text(root, height=1, width=30, bg='light yellow')
-txt_server = Label(root, text="Servidor:",
-                   width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
+txt_server = Label(root, text="Servidor:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_server = Text(root, height=1, width=30, bg='light yellow')
-txt_db = Label(root, text="Banco de Dados:",
-               width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
+txt_db = Label(root, text="Banco de Dados:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_db = Text(root, height=1, width=30, bg='light yellow')
-btn_insert_data = Button(root, text="Executar Script(s)",
-                         width=20, justify=CENTER, command=lambda: insert_data_into_db(tbx_dir2, tbx_server, tbx_db))
-txt_version = Label(root, text="v0.0.3", bg='white', fg='black', justify=RIGHT, anchor='e')
 
-# Associando widgets à janela principal
+btn_insert_data = Button(root, text="Executar Script(s)", width=20, justify=CENTER,
+                         command=lambda: insert_data_into_db(tbx_dir2, tbx_server, tbx_db))
+txt_version = Label(root, text="v0.0.4", bg='white', fg='black', justify=RIGHT, anchor='e')
+
+# Posição dos widgets - Geração de Scripts SQL
 txt_title1.grid(row=0, column=0, columnspan=2, pady=10)
 txt_dir1.grid(row=1, column=0, pady=5, sticky=W)
 tbx_dir1.grid(row=1, column=1)
@@ -63,6 +57,7 @@ tbx_table.grid(row=2, column=1)
 btn_insert_scripts.grid(row=3, column=0, pady=10)
 btn_update_scripts.grid(row=3, column=1, pady=10)
 
+# Posição dos widgets - Execução de Scripts SQL
 txt_title2.grid(row=4, column=0, columnspan=2, pady=10)
 txt_dir2.grid(row=5, column=0, pady=5, sticky=W)
 tbx_dir2.grid(row=5, column=1)
