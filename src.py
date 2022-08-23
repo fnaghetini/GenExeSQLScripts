@@ -11,7 +11,7 @@ def __get_path_leaf(path):
     return tail or ntpath.basename(head)
 
 
-def __select_csv_directory():
+def __select_directory():
     folderpath = filedialog.askdirectory(initialdir='/', title='Selecione uma Pasta')
     return folderpath
 
@@ -62,8 +62,8 @@ def __get_update_script_row(input_table, cols_values_str, table, row_idx):
     return row
 
 
-def insert_scripts(tbx_dir, tbx_table):
-    folder_path = tbx_dir.get("1.0", "end-1c")
+def insert_scripts(tbx_table):
+    folder_path = __select_directory()
     input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
     input_table = tbx_table.get("1.0", "end-1c")
 
@@ -102,8 +102,8 @@ def insert_scripts(tbx_dir, tbx_table):
         messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
-def update_scripts(tbx_dir, tbx_table):
-    folder_path = tbx_dir.get("1.0", "end-1c")
+def update_scripts(tbx_table):
+    folder_path = __select_directory()
     input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
     input_table = tbx_table.get("1.0", "end-1c")
 
@@ -142,8 +142,8 @@ def update_scripts(tbx_dir, tbx_table):
         messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
-def insert_data_into_db(tbx_dir, tbx_server, tbx_db):
-    folder_path = tbx_dir.get("1.0", "end-1c")
+def insert_data_into_db(tbx_server, tbx_db):
+    folder_path = __select_directory()
     input_scripts_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.sql")]
 
     server = tbx_server.get("1.0", "end-1c")
