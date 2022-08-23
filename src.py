@@ -11,6 +11,11 @@ def __get_path_leaf(path):
     return tail or ntpath.basename(head)
 
 
+def __select_csv_directory():
+    folderpath = filedialog.askdirectory(initialdir='/', title='Selecione uma Pasta')
+    return folderpath
+
+
 def __get_insert_cols_str(table):
     cols_list = [f'[{col}],' for col in table.columns]
     cols_str = ''.join(map(str, cols_list))[:-1]
