@@ -14,8 +14,6 @@ from src import insert_data_into_db
 # Criação da janela principal
 root = Tk()
 
-# Ícone
-root.wm_iconbitmap('datamine.ico')
 # Título
 root.title("Datamine GDMS")
 # Dimensões da tabela
