@@ -142,28 +142,40 @@ def update_scripts(tbx_table):
         messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
-def insert_data_into_db(tbx_server, tbx_db):
+def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd=''):
     folder_path = __select_directory()
     input_scripts_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.sql")]
 
+    driver = driver_var.get()
     server = tbx_server.get("1.0", "end-1c")
     database = tbx_db.get("1.0", "end-1c")
+    user = tbx_user.get("1.0", "end-1c")
+    pwd = tbx_pwd.get("1.0", "end-1c")
 
     if folder_path == '' or server == '' or database == '':
         messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
     elif len(input_scripts_list) == 0:
         messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
     else:
-        # Dados de conexão
-        conn_data = (
-            "Driver={SQL Server};"
-            f"Server={server};"
-            f"Database={database};"
-            "Trusted_Connection=yes;"
-        )
-        # Conexão com o SQL Server
+        if user == '' and pwd == '':
+            conn_data = (
+                f"Driver={driver};"
+                f"Server={server};"
+                f"Database={database};"
+                "Trusted_Connection=yes;"
+            )
+        else:
+            conn_data = (
+                f"Driver={driver};"
+                f"Server={server};"
+                f"Database={database};"
+                f"UID={user};"
+                f"PWD={pwd};"
+            )
+
         conn = odbc.connect(conn_data)
         messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
+
         count = 1
 
         for script_file in input_scripts_list:
