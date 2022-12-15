@@ -159,14 +159,14 @@ def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd='')
     else:
         if user == '' and pwd == '':
             conn_data = (
-                f"Driver={driver};"
+                "Driver={" + driver + "};"
                 f"Server={server};"
                 f"Database={database};"
                 "Trusted_Connection=yes;"
             )
         else:
             conn_data = (
-                f"Driver={driver};"
+                "Driver={" + driver + "};"
                 f"Server={server};"
                 f"Database={database};"
                 f"UID={user};"
