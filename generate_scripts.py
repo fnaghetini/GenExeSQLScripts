@@ -26,9 +26,9 @@ txt_title1 = Label(root, text="Geração de Scripts SQL", bg='white', fg='black'
 txt_table = Label(root, text="Nome da Tabela:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
 
-btn_insert_scripts = Button(root, text="Gerar INSERT Script(s)", width=20, justify=CENTER,
+btn_insert_scripts = Button(root, text="Gerar INSERT Script(s)", width=20, justify=CENTER, cursor='hand2',
                             command=lambda: insert_scripts(tbx_table))
-btn_update_scripts = Button(root, text="Gerar UPDATE Script(s)", width=20, justify=CENTER,
+btn_update_scripts = Button(root, text="Gerar UPDATE Script(s)", width=20, justify=CENTER, cursor='hand2',
                             command=lambda: update_scripts(tbx_table))
 
 # Criação dos widgets - Execução de Scripts SQL
@@ -47,7 +47,7 @@ tbx_user = Text(root, height=1, width=30, bg='white')
 txt_pwd = Label(root, text="Senha:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_pwd = Text(root, height=1, width=30, bg='white')
 
-btn_insert_data = Button(root, text="Executar Script(s)", width=20, justify=CENTER,
+btn_insert_data = Button(root, text="Executar Script(s)", width=20, justify=CENTER, cursor='hand2',
                          command=lambda: insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user, tbx_pwd))
 txt_version = Label(root, text="v0.0.6", bg='white', fg='black', justify=RIGHT, anchor='e')
 
