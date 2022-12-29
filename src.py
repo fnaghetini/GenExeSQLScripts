@@ -24,7 +24,8 @@ def __get_insert_cols_str(table):
 
 def __get_date_cols_index(table):
     date_cols = ['analysis_date', 'date_shipped', 'sampling_date', 'date_plan',
-                 'date_shipped', 'date_imported', 'date_received']
+                 'date_shipped', 'date_imported', 'date_received','date_mag_con',
+                 'hist_last_modified_date','coordinate_date','LAST_MODIFIED_DATE_TIME']
     date_cols_idxs = [i for i, col in enumerate(list(table.columns)) if col in date_cols]
     return date_cols_idxs
 
@@ -174,6 +175,7 @@ def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd='')
             )
 
         conn = odbc.connect(conn_data)
+
         messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
 
         count = 1
