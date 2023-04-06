@@ -23,10 +23,6 @@ def __get_insert_cols_str(table):
 
 
 def __get_date_cols_index(table):
-    # date_cols = ['analysis_date', 'date_shipped', 'sampling_date', 'date_plan',
-    #              'date_shipped', 'date_imported', 'date_received','date_mag_con',
-    #              'hist_last_modified_date','coordinate_date','LAST_MODIFIED_DATE_TIME',
-    #              'last_modified_date_time']
     date_cols_idxs = [i for i, col in enumerate(list(table.columns)) if 'date' in col.lower()]
     return date_cols_idxs
 
