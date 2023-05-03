@@ -4,7 +4,7 @@ from glob import glob
 from tkinter import messagebox
 from tkinter import filedialog
 import pyodbc as odbc
-from constants import TABLE_KEY_RELATIONSHIP
+from src.constants import TABLE_KEY_RELATIONSHIP
 
 
 def __get_path_leaf(path):
@@ -28,7 +28,7 @@ def __get_date_cols_index(table):
     return date_cols_idxs
 
 
-def __get_insert_values_str(table, row_idx):
+def __get_values_list(table, row_idx):
     date_cols_idxs = __get_date_cols_index(table)
     values_list = []
 
@@ -40,8 +40,11 @@ def __get_insert_values_str(table, row_idx):
                 values_list.append(f"CONVERT(DATETIME,'{value}',103),")
             else:
                 values_list.append(f"'{value}',")
-    values_str = ''.join(map(str, values_list))[:-1]
-    return values_str
+    return values_list
+
+
+def __get_values_string(values_list):
+    return ''.join(map(str, values_list))[:-1]
 
 
 def __get_insert_script_row(input_table, cols_str, values_str):
@@ -50,7 +53,7 @@ def __get_insert_script_row(input_table, cols_str, values_str):
 
 
 def __get_update_values_cols_str(table, row_idx, cols_list):
-    values_list = [f"'{value}'," if not pd.isna(value) else "NULL," for value in table.iloc[row_idx, :]]
+    values_list = __get_values_list(table, row_idx)
     cols_values_list = [f"{col} = {value}" for col, value in zip(cols_list, values_list)]
     cols_values_str = ''.join(map(str, cols_values_list))[:-1]
     return cols_values_str
@@ -60,13 +63,10 @@ def __get_update_script_row(input_table, cols_values_str, table, row_idx):
     key = TABLE_KEY_RELATIONSHIP[input_table]
     # Chave primária
     if len(key) == 1:
-        row = f"""UPDATE {input_table} SET {cols_values_str}\n
-        WHERE {key[0]} = '{table.loc[row_idx, key[0]]}';\n"""
+        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, key[0]]}';\n"""
     # Chave composta
     else:
-        row = f"""UPDATE {input_table} SET {cols_values_str}\n
-        WHERE {key[0]} = '{table.loc[row_idx, {key[0]}]}' AND
-        {key[1]} = '{table.loc[row_idx, {key[1]}]}';\n"""
+        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, {key[0]}]}' AND {key[1]} = '{table.loc[row_idx, {key[1]}]}';\n"""
     return row
 
 
@@ -95,16 +95,19 @@ def insert_scripts(tbx_table):
                     script.close()
                     n_script += 1
                     script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
-                    values_str = __get_insert_values_str(table, i)
+                    values_list = __get_values_list(table, i)
+                    values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                 elif i == len(table):
-                    values_str = __get_insert_values_str(table, i)
+                    values_list = __get_values_list(table, i)
+                    values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                     script.close()
                 else:
-                    values_str = __get_insert_values_str(table, i)
+                    values_list = __get_values_list(table, i)
+                    values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
         messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
