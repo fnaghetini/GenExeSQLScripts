@@ -4,6 +4,7 @@ from glob import glob
 from tkinter import messagebox
 from tkinter import filedialog
 import pyodbc as odbc
+from constants import TABLE_KEY_RELATIONSHIP
 
 
 def __get_path_leaf(path):
@@ -56,7 +57,16 @@ def __get_update_values_cols_str(table, row_idx, cols_list):
 
 
 def __get_update_script_row(input_table, cols_values_str, table, row_idx):
-    row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE sample_number = '{table.loc[row_idx, 'sample_number']}';\n"""
+    key = TABLE_KEY_RELATIONSHIP[input_table]
+    # Chave primária
+    if len(key) == 1:
+        row = f"""UPDATE {input_table} SET {cols_values_str}\n
+        WHERE {key[0]} = '{table.loc[row_idx, key[0]]}';\n"""
+    # Chave composta
+    else:
+        row = f"""UPDATE {input_table} SET {cols_values_str}\n
+        WHERE {key[0]} = '{table.loc[row_idx, {key[0]}]}' AND
+        {key[1]} = '{table.loc[row_idx, {key[1]}]}';\n"""
     return row
 
 
