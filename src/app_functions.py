@@ -82,7 +82,7 @@ def insert_scripts(tbx_table):
     else:
         for file in input_files_list:
             # Importação da tabela
-            table = pd.read_csv(file, sep=',', header=0, dtype=str)
+            table = pd.read_csv(file, sep=',', header=0, dtype=str, encoding='utf-8', low_memory=False)
             # Definição do comando SQL
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
@@ -125,7 +125,7 @@ def update_scripts(tbx_table):
     else:
         for file in input_files_list:
             # Importação da tabela
-            table = pd.read_csv(file, sep=',', header=0, dtype=str)
+            table = pd.read_csv(file, sep=',', header=0, dtype=str, encoding='utf-8', low_memory=False)
             # Definição do comando SQL
             cols_list = list(table.columns)
             # Criação do 1° script SQL
