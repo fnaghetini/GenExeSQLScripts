@@ -66,7 +66,7 @@ def __get_update_script_row(input_table, cols_values_str, table, row_idx):
         row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, key[0]]}';\n"""
     # Chave composta
     else:
-        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, {key[0]}]}' AND {key[1]} = '{table.loc[row_idx, {key[1]}]}';\n"""
+        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, key[0]]}' AND {key[1]} = '{table.loc[row_idx, key[1]]}';\n"""
     return row
 
 
