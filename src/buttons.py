@@ -2,6 +2,7 @@ from tkinter import messagebox
 import pyodbc as odbc
 from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list, __read_csv
+from src.scriptheaderbuilder import __build_script_header
 from src.scriptrowbuilder import __get_values_list, __get_values_string
 from src.scriptrowbuilder import __get_insert_cols_str, __get_insert_script_row
 from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_script_row
@@ -24,14 +25,20 @@ def insert_scripts(tbx_table):
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
             n_script = 1
-            script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
+            script_name = f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql"
+            script = open(script_name, 'w+')
+            header = __build_script_header(script_name.rsplit('/', 1)[1])
+            script.write(header)
 
             # Iteração sobre as linhas da tabela
             for i in range(len(table)):
                 if i not in [0, len(table)] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
                     script.close()
                     n_script += 1
-                    script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
+                    script_name = f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql"
+                    script = open(script_name, 'w+')
+                    header = __build_script_header(script_name.rsplit('/', 1)[1])
+                    script.write(header)
                     values_list = __get_values_list(table, i)
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
@@ -67,14 +74,20 @@ def update_scripts(tbx_table):
             cols_list = list(table.columns)
             # Criação do 1° script SQL
             n_script = 1
-            script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
+            script_name = f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql"
+            script = open(script_name, 'w+')
+            header = __build_script_header(script_name.rsplit('/', 1)[1])
+            script.write(header)
 
             # Iteração sobre as linhas da tabela
             for i in range(len(table)):
                 if i not in [0, len(table)] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
-                    script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
+                    script_name = f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql"
+                    script = open(script_name, 'w+')
+                    header = __build_script_header(script_name.rsplit('/', 1)[1])
+                    script.write(header)
                     cols_values_str = __get_update_values_cols_str(table, i, cols_list)
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
