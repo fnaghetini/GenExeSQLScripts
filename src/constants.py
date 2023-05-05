@@ -10,3 +10,7 @@ TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['HOLE_NUMBER'],
                           'UDEF_DHL_GEOTECNIC': ['HOLE_NUMBER', 'depth_from'],
                           'UDEF_DHL_DENSITY': ['HOLE_NUMBER', 'depth_from'],
                           'UDEF_DHL_DENSITY_QAQC': ['HOLE_NUMBER', 'depth_from']}
+
+# Limite de linhas para scripts
+INSERT_SCRIPT_ROWS_LIMIT = 20_000
+UPDATE_SCRIPT_ROWS_LIMIT = 10_000

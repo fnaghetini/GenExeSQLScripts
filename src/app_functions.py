@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 import pyodbc as odbc
 from src.constants import TABLE_KEY_RELATIONSHIP
+from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
 
 
 def __get_path_leaf(path):
@@ -91,7 +92,7 @@ def insert_scripts(tbx_table):
 
             # Iteração sobre as linhas da tabela
             for i in range(len(table)):
-                if i not in [0, len(table)] and i % 20000 == 0:
+                if i not in [0, len(table)] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
                     script.close()
                     n_script += 1
                     script = open(f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql", 'w+')
@@ -134,7 +135,7 @@ def update_scripts(tbx_table):
 
             # Iteração sobre as linhas da tabela
             for i in range(len(table)):
-                if i not in [0, len(table)] and i % 10000 == 0:
+                if i not in [0, len(table)] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
                     script = open(f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql", 'w+')
