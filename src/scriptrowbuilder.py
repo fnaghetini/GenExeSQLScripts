@@ -1,10 +1,10 @@
-from src.constants import TABLE_KEY_RELATIONSHIP
+from src.constants import TABLE_KEY_RELATIONSHIP, DATE_CONVENTION
 import pandas as pd
 
 
 def __get_date_cols_index(table):
     date_cols_idxs = [i for i, col in enumerate(list(table.columns)) if 'date' in col.lower()]
-    return date_cols_idxs
+    return date_cols_idxs[:-1]  # exceto LAST_MODIFIED_DATE_TIME
 
 
 def __get_values_list(table, row_idx):
@@ -16,7 +16,9 @@ def __get_values_list(table, row_idx):
             values_list.append("NULL,")
         else:
             if col_idx in date_cols_idxs:
-                values_list.append(f"CONVERT(DATETIME,'{value}',103),")
+                values_list.append(f"CONVERT(DATETIME,'{value}',{DATE_CONVENTION}),")
+            elif col_idx == len(table.columns)-1:
+                values_list.append(f"CONVERT(DATETIME,GETDATE(),{DATE_CONVENTION}),")
             else:
                 values_list.append(f"'{value}',")
     return values_list

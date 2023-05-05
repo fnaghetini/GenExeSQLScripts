@@ -1,3 +1,6 @@
+# Convenção de data
+DATE_CONVENTION = 103
+
 # Relação tabela -> chave primária
 TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['HOLE_NUMBER'],
                           'DRILL_HOLE_COORDINATE': ['HOLE_NUMBER'],
@@ -9,7 +12,7 @@ TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['HOLE_NUMBER'],
                           'UDEF_DHL_GEOLOGY': ['HOLE_NUMBER', 'depth_from'],
                           'UDEF_DHL_GEOTECNIC': ['HOLE_NUMBER', 'depth_from'],
                           'UDEF_DHL_DENSITY': ['HOLE_NUMBER', 'depth_from'],
-                          'UDEF_DHL_DENSITY_QAQC': ['HOLE_NUMBER', 'depth_from']}
+                          'UDEF_DHL_DENSITY_QAQC': ['sample_number']}
 
 # Limite de linhas para scripts
 INSERT_SCRIPT_ROWS_LIMIT = 20_000
