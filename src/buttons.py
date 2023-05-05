@@ -11,7 +11,7 @@ from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_scri
 
 def insert_scripts(tbx_table):
     folder_path = __select_directory()
-    input_files_list = __get_input_files_list(folder_path)
+    input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = tbx_table.get("1.0", "end-1c")
 
     if folder_path == '':
@@ -61,7 +61,7 @@ def insert_scripts(tbx_table):
 
 def update_scripts(tbx_table):
     folder_path = __select_directory()
-    input_files_list = __get_input_files_list(folder_path)
+    input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = tbx_table.get("1.0", "end-1c")
 
     if folder_path == '':
@@ -108,7 +108,7 @@ def update_scripts(tbx_table):
 
 def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd=''):
     folder_path = __select_directory()
-    input_scripts_list = __get_input_files_list(folder_path)
+    input_scripts_list = __get_input_files_list(folder_path, 'sql')
 
     driver = driver_var.get()
     server = tbx_server.get("1.0", "end-1c")

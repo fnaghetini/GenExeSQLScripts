@@ -14,8 +14,8 @@ def __select_directory():
     return folderpath
 
 
-def __get_input_files_list(folder_path):
-    return [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
+def __get_input_files_list(folder_path, extension):
+    return [f.replace('\\', '/') for f in glob(f"{folder_path}/*.{extension}")]
 
 
 def __read_csv(file):
