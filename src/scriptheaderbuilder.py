@@ -1,16 +1,11 @@
 from datetime import date
 
-today = date.today()
-
-
-def __get_current_date():
-    return today.strftime("%d/%m/%Y")
-
 
 def __build_script_header(name):
+    today = date.today()
     header = f"""/****** Autor:           Datamine Software                                     ******/
 /****** Contato:         support.sa@dataminesoftware.com                       ******/
-/****** Data de Criação: {__get_current_date()}                                            ******/
+/****** Data de Criação: {today.strftime("%d/%m/%Y")}                                            ******/
 /****** Script:          {name}            ******/\n\n\n"""
 
     return header
