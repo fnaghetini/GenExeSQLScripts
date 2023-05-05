@@ -1,5 +1,4 @@
 from tkinter import messagebox
-import pyodbc as odbc
 from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list, __read_csv
 from src.auditicolumnsbuilder import __get_autiting_cols
@@ -7,6 +6,7 @@ from src.scriptheaderbuilder import __build_script_header
 from src.scriptrowbuilder import __get_values_list, __get_values_string
 from src.scriptrowbuilder import __get_insert_cols_str, __get_insert_script_row
 from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_script_row
+from src.database import Database
 
 
 def insert_scripts(tbx_table):
@@ -110,51 +110,28 @@ def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd='')
     folder_path = __select_directory()
     input_scripts_list = __get_input_files_list(folder_path, 'sql')
 
-    driver = driver_var.get()
-    server = tbx_server.get("1.0", "end-1c")
-    database = tbx_db.get("1.0", "end-1c")
-    user = tbx_user.get("1.0", "end-1c")
-    pwd = tbx_pwd.get("1.0", "end-1c")
+    db = Database(driver_var.get(),
+                  tbx_server.get("1.0", "end-1c"),
+                  tbx_db.get("1.0", "end-1c"),
+                  tbx_user.get("1.0", "end-1c"),
+                  tbx_pwd.get("1.0", "end-1c")
+                  )
+    db.open_connection()
 
-    if folder_path == '' or server == '' or database == '':
-        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
-    elif len(input_scripts_list) == 0:
-        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
-    else:
-        if user == '' and pwd == '':
-            conn_data = (
-                    "Driver={" + driver + "};"
-                                          f"Server={server};"
-                                          f"Database={database};"
-                                          "Trusted_Connection=yes;"
-            )
-        else:
-            conn_data = (
-                    "Driver={" + driver + "};"
-                                          f"Server={server};"
-                                          f"Database={database};"
-                                          f"UID={user};"
-                                          f"PWD={pwd};"
-            )
+    count = 1
 
-        conn = odbc.connect(conn_data)
+    for script_file in input_scripts_list:
+        with open(script_file, 'r') as inserts:
+            script = inserts.read()
+            for statement in script.split(';'):
+                with db.cursor() as cursor:
+                    cursor.execute(statement)
 
-        messagebox.showinfo('ODBC', f'Conexão com o banco {database} realizada com sucesso!')
+        print(f"Script {__get_path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
 
-        count = 1
+        count += 1
 
-        for script_file in input_scripts_list:
-            with open(script_file, 'r') as inserts:
-                script = inserts.read()
-                for statement in script.split(';'):
-                    with conn.cursor() as cursor:
-                        cursor.execute(statement)
+    db.close_connection()
 
-            print(f"Script {__get_path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
-
-            count += 1
-
-        conn.close()
-
-        messagebox.showinfo('Processo Concluído',
-                            f'{len(input_scripts_list)} script(s) executado(s) com sucesso no banco {database}!')
+    messagebox.showinfo('Processo Concluído',
+                        f'{len(input_scripts_list)} script(s) executado(s) com sucesso!')
