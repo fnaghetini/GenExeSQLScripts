@@ -1,21 +1,8 @@
-import ntpath
 import pandas as pd
-from glob import glob
 from tkinter import messagebox
-from tkinter import filedialog
 import pyodbc as odbc
-from src.constants import TABLE_KEY_RELATIONSHIP
-from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
-
-
-def __get_path_leaf(path):
-    head, tail = ntpath.split(path)
-    return tail or ntpath.basename(head)
-
-
-def __select_directory():
-    folderpath = filedialog.askdirectory(initialdir='/', title='Selecione uma Pasta')
-    return folderpath
+from src.constants import TABLE_KEY_RELATIONSHIP, INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
+from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list, __read_csv
 
 
 def __get_insert_cols_str(table):
@@ -73,7 +60,7 @@ def __get_update_script_row(input_table, cols_values_str, table, row_idx):
 
 def insert_scripts(tbx_table):
     folder_path = __select_directory()
-    input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
+    input_files_list = __get_input_files_list(folder_path)
     input_table = tbx_table.get("1.0", "end-1c")
 
     if folder_path == '':
@@ -83,7 +70,7 @@ def insert_scripts(tbx_table):
     else:
         for file in input_files_list:
             # Importação da tabela
-            table = pd.read_csv(file, sep=',', header=0, dtype=str, encoding='utf-8', low_memory=False)
+            table = __read_csv(file)
             # Definição do comando SQL
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
@@ -116,7 +103,7 @@ def insert_scripts(tbx_table):
 
 def update_scripts(tbx_table):
     folder_path = __select_directory()
-    input_files_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.csv")]
+    input_files_list = __get_input_files_list(folder_path)
     input_table = tbx_table.get("1.0", "end-1c")
 
     if folder_path == '':
@@ -126,7 +113,7 @@ def update_scripts(tbx_table):
     else:
         for file in input_files_list:
             # Importação da tabela
-            table = pd.read_csv(file, sep=',', header=0, dtype=str, encoding='utf-8', low_memory=False)
+            table = __read_csv(file)
             # Definição do comando SQL
             cols_list = list(table.columns)
             # Criação do 1° script SQL
@@ -156,7 +143,7 @@ def update_scripts(tbx_table):
 
 def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd=''):
     folder_path = __select_directory()
-    input_scripts_list = [f.replace('\\', '/') for f in glob(f"{folder_path}/*.sql")]
+    input_scripts_list = __get_input_files_list(folder_path)
 
     driver = driver_var.get()
     server = tbx_server.get("1.0", "end-1c")
@@ -171,18 +158,18 @@ def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd='')
     else:
         if user == '' and pwd == '':
             conn_data = (
-                "Driver={" + driver + "};"
-                f"Server={server};"
-                f"Database={database};"
-                "Trusted_Connection=yes;"
+                    "Driver={" + driver + "};"
+                                          f"Server={server};"
+                                          f"Database={database};"
+                                          "Trusted_Connection=yes;"
             )
         else:
             conn_data = (
-                "Driver={" + driver + "};"
-                f"Server={server};"
-                f"Database={database};"
-                f"UID={user};"
-                f"PWD={pwd};"
+                    "Driver={" + driver + "};"
+                                          f"Server={server};"
+                                          f"Database={database};"
+                                          f"UID={user};"
+                                          f"PWD={pwd};"
             )
 
         conn = odbc.connect(conn_data)
