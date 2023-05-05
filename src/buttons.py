@@ -9,7 +9,7 @@ from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_scri
 from src.database import Database
 
 
-def insert_scripts(tbx_table):
+def insert_scripts(tbx_table, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = tbx_table.get("1.0", "end-1c")
@@ -22,7 +22,8 @@ def insert_scripts(tbx_table):
         for file in input_files_list:
             # Importação da tabela
             table = __read_csv(file)
-            __get_autiting_cols(table)
+            if cbx_modify_cols_var == 1:
+                __get_autiting_cols(table)
             # Definição do comando SQL
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
@@ -59,7 +60,7 @@ def insert_scripts(tbx_table):
         messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
-def update_scripts(tbx_table):
+def update_scripts(tbx_table, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = tbx_table.get("1.0", "end-1c")
@@ -72,7 +73,8 @@ def update_scripts(tbx_table):
         for file in input_files_list:
             # Importação da tabela
             table = __read_csv(file)
-            __get_autiting_cols(table)
+            if cbx_modify_cols_var == 1:
+                __get_autiting_cols(table)
             # Definição do comando SQL
             cols_list = list(table.columns)
             # Criação do 1° script SQL
@@ -104,6 +106,7 @@ def update_scripts(tbx_table):
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
         messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
+        print(cbx_modify_cols_var)
 
 
 def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd=''):
