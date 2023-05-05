@@ -1,6 +1,6 @@
 from tkinter import *
 from idlelib.tooltip import Hovertip
-from src.app_functions import insert_scripts, update_scripts, insert_data_into_db
+from src.buttons import insert_scripts, update_scripts, insert_data_into_db
 
 
 ######################################################################################
