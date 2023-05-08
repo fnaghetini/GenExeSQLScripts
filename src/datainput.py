@@ -21,3 +21,6 @@ def __get_input_files_list(folder_path, extension):
 def __read_csv(file):
     return pd.read_csv(file, sep=',', header=0, dtype=str, encoding='utf-8', low_memory=False)
 
+
+def __clean_table_column_names(table):
+    return table.columns.str.strip().str.lower()

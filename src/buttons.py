@@ -1,6 +1,7 @@
 from tkinter import messagebox
 from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
-from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list, __read_csv
+from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list
+from src.datainput import __read_csv, __clean_table_column_names
 from src.auditicolumnsbuilder import __get_autiting_cols
 from src.scriptheaderbuilder import __build_script_header
 from src.scriptrowbuilder import __get_values_list, __get_values_string
@@ -22,6 +23,8 @@ def insert_scripts(tbx_table, cbx_modify_cols_var):
         for file in input_files_list:
             # Importação da tabela
             table = __read_csv(file)
+            # Limpando nomes de colunas
+            table.columns = __clean_table_column_names(table)
             if cbx_modify_cols_var == 1:
                 __get_autiting_cols(table)
             # Definição do comando SQL
@@ -73,6 +76,8 @@ def update_scripts(tbx_table, cbx_modify_cols_var):
         for file in input_files_list:
             # Importação da tabela
             table = __read_csv(file)
+            # Limpando nomes de colunas
+            table.columns = __clean_table_column_names(table)
             if cbx_modify_cols_var == 1:
                 __get_autiting_cols(table)
             # Definição do comando SQL
