@@ -3,12 +3,20 @@ import pandas as pd
 
 
 def __get_date_cols_index(table):
-    date_cols_idxs = [i for i, col in enumerate(list(table.columns)) if 'date' in col.lower()]
-    return date_cols_idxs[:-1]  # exceto LAST_MODIFIED_DATE_TIME
+    date_cols_idxs = [i for i, col in enumerate(list(table.columns))
+                      if 'date' in col.lower() and col.lower() != 'last_modified_date_time']
+    return date_cols_idxs
+
+
+def __get_last_modified_date_time_index(table):
+    last_modified_date_time_idx = [i for i, col in enumerate(list(table.columns))
+                                   if col.lower() == 'last_modified_date_time']
+    return last_modified_date_time_idx
 
 
 def __get_values_list(table, row_idx):
     date_cols_idxs = __get_date_cols_index(table)
+    last_modified_date_time_idx = __get_last_modified_date_time_index(table)
     values_list = []
 
     for col_idx, value in enumerate(table.iloc[row_idx, :]):
@@ -17,7 +25,7 @@ def __get_values_list(table, row_idx):
         else:
             if col_idx in date_cols_idxs:
                 values_list.append(f"CONVERT(DATETIME,'{value}',{DATE_CONVENTION}),")
-            elif col_idx == len(table.columns)-1:
+            elif col_idx in last_modified_date_time_idx:
                 values_list.append(f"CONVERT(DATETIME,GETDATE(),{DATE_CONVENTION}),")
             else:
                 values_list.append(f"'{value}',")
