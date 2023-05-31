@@ -4,7 +4,7 @@ DATE_CONVENTION = 103
 # Relação tabela -> chave primária
 TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['hole_number'],
                           'DRILL_HOLE_COORDINATE': ['hole_number'],
-                          'DRILL_HOLE_DIRECTION': ['hole_number', 'depth'],
+                          'DRILL_HOLE_DIRECTION': ['hole_number', 'depth', 'test_type_code'],
                           'HOLE_ASSAY_SAMPLE': ['sample_number'],
                           'HOLE_INTERVAL': ['hole_number', 'depth_from'],
                           'UDEF_CORE_RECOVERY': ['hole_number', 'depth_from'],
