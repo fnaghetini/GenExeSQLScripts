@@ -48,12 +48,14 @@ def __get_update_values_cols_str(table, row_idx, cols_list):
     return cols_values_str
 
 
-def __get_update_script_row(input_table, cols_values_str, table, row_idx):
+def __get_update_script_row(input_table, cols_values_str, df, row_idx):
     key = TABLE_KEY_RELATIONSHIP[input_table]
     # Chave primária
     if len(key) == 1:
-        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, key[0]]}';\n"""
+        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{df.loc[row_idx, key[0]]}';\n"""
     # Chave composta
-    else:
-        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{table.loc[row_idx, key[0]]}' AND {key[1]} = '{table.loc[row_idx, key[1]]}';\n"""
+    elif len(key) == 2:
+        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{df.loc[row_idx, key[0]]}' AND {key[1]} = '{df.loc[row_idx, key[1]]}';\n"""
+    elif len(key) == 3:
+        row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{df.loc[row_idx, key[0]]}' AND {key[1]} = '{df.loc[row_idx, key[1]]}' AND {key[2]} = '{df.loc[row_idx, key[2]]}';\n"""
     return row
