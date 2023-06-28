@@ -11,6 +11,7 @@ TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['hole_number'],
                           'UDEF_GEOLOGY': ['hole_number', 'depth_from'],
                           'UDEF_DHL_GEOLOGY': ['hole_number', 'depth_from'],
                           'UDEF_DHL_GEOTECNIC': ['hole_number', 'depth_from'],
+                          'UDEF_DHL_GEOTECHNIC': ['hole_number', 'depth_from'],
                           'UDEF_DHL_DENSITY': ['hole_number', 'depth_from'],
                           'UDEF_DHL_DENSITY_QAQC': ['sample_number']}
 
