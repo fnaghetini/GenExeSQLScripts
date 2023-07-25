@@ -4,7 +4,7 @@ import pandas as pd
 
 def __get_date_cols_index(table):
     date_cols_idxs = [i for i, col in enumerate(list(table.columns))
-                      if 'date' in col.lower() and col.lower() != 'last_modified_date_time']
+                      if 'date' in col.lower() and col.lower() not in ['last_modified_date_time', 'date_imported']]
     return date_cols_idxs
 
 
@@ -14,9 +14,15 @@ def __get_last_modified_date_time_index(table):
     return last_modified_date_time_idx
 
 
+def __get_date_imported_index(table):
+    date_imported_idx = [i for i, col in enumerate(list(table.columns)) if col.lower() == 'date_imported']
+    return date_imported_idx
+
+
 def __get_values_list(table, row_idx):
     date_cols_idxs = __get_date_cols_index(table)
     last_modified_date_time_idx = __get_last_modified_date_time_index(table)
+    date_imported_idx = __get_date_imported_index(table)
     values_list = []
 
     for col_idx, value in enumerate(table.iloc[row_idx, :]):
@@ -27,6 +33,8 @@ def __get_values_list(table, row_idx):
                 values_list.append(f"CONVERT(DATETIME,'{value}',{DATE_CONVENTION}),")
             elif col_idx in last_modified_date_time_idx:
                 values_list.append(f"CONVERT(DATETIME,GETDATE(),{DATE_CONVENTION}),")
+            elif col_idx in date_imported_idx:
+                values_list.append(f"CONVERT(DATETIME,'{value}',120),")
             else:
                 values_list.append(f"'{value}',")
     return values_list
