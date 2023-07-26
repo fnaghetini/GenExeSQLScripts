@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
+from src.constants import DATE_CONVENTIONS, INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list
 from src.datainput import __read_csv, __clean_table_column_names
 from src.auditicolumnsbuilder import __get_autiting_cols
@@ -10,10 +10,11 @@ from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_scri
 from src.database import Database
 
 
-def insert_scripts(tbx_table, cbx_modify_cols_var):
+def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = tbx_table.get("1.0", "end-1c")
+    date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
         messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
@@ -45,18 +46,18 @@ def insert_scripts(tbx_table, cbx_modify_cols_var):
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1])
                     script.write(header)
-                    values_list = __get_values_list(table, i)
+                    values_list = __get_values_list(table, i, date_convention)
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                 elif i == len(table):
-                    values_list = __get_values_list(table, i)
+                    values_list = __get_values_list(table, i, date_convention)
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                     script.close()
                 else:
-                    values_list = __get_values_list(table, i)
+                    values_list = __get_values_list(table, i, date_convention)
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)

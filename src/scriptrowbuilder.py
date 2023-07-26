@@ -1,4 +1,4 @@
-from src.constants import TABLE_KEY_RELATIONSHIP, DATE_CONVENTION
+from src.constants import TABLE_KEY_RELATIONSHIP
 import pandas as pd
 
 
@@ -19,7 +19,7 @@ def __get_date_imported_index(table):
     return date_imported_idx
 
 
-def __get_values_list(table, row_idx):
+def __get_values_list(table, row_idx, date_convention):
     date_cols_idxs = __get_date_cols_index(table)
     last_modified_date_time_idx = __get_last_modified_date_time_index(table)
     date_imported_idx = __get_date_imported_index(table)
@@ -30,9 +30,9 @@ def __get_values_list(table, row_idx):
             values_list.append("NULL,")
         else:
             if col_idx in date_cols_idxs:
-                values_list.append(f"CONVERT(DATETIME,'{value}',{DATE_CONVENTION}),")
+                values_list.append(f"CONVERT(DATETIME,'{value}',{date_convention}),")
             elif col_idx in last_modified_date_time_idx:
-                values_list.append(f"CONVERT(DATETIME,GETDATE(),{DATE_CONVENTION}),")
+                values_list.append(f"CONVERT(DATETIME,GETDATE(),{date_convention}),")
             elif col_idx in date_imported_idx:
                 values_list.append(f"CONVERT(DATETIME,'{value}',120),")
             else:
