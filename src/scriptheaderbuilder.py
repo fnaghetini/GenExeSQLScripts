@@ -1,12 +1,12 @@
-from datetime import date
+from datetime import datetime
 
 
 def __build_script_header(name):
-    today = date.today()
-    header = f"""/****** Autor:           Datamine Software                                     ******/
-/****** Contato:         support.sa@dataminesoftware.com                       ******/
-/****** Data de Criação: {today.strftime("%d/%m/%Y")}                                            ******/
-/****** Script:          {name}            ******/\n\n\n"""
+    now = datetime.now()
+    header = f"""-- Author:            Datamine Software
+-- Contact:           support.sa@dataminesoftware.com
+-- Creation Datetime: {now.strftime("%d/%m/%Y %H:%M:%S")}
+-- Script Name:       {name}\n\n\n"""
 
     return header
 

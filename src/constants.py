@@ -1,15 +1,15 @@
 # Convenção de data
-DATE_CONVENTIONS = {'mm/dd/yyyy': '101',
-                    'yyyy.mm.dd': '102',
-                    'dd/mm/yyyy': '103',
-                    'dd.mm.yyyy': '104',
-                    'dd-mm-yyyy': '105',
-                    'mm-dd-yyyy': '110',
-                    'yyyy/mm/dd': '111',
-                    'yyyy-mm-dd': '23',
-                    'yyyy-dd-mm': '31',
-                    'mm-yyyy-dd': '33',
-                    'dd-yyyy-mm': '35'}
+DATE_CONVENTIONS = {'mm/dd/yyyy': ['101', '%m/%d/%Y'],
+                    'yyyy.mm.dd': ['102', '%Y.%m.%d'],
+                    'dd/mm/yyyy': ['103', '%d/%m/%Y'],
+                    'dd.mm.yyyy': ['104', '%d.%m.%Y'],
+                    'dd-mm-yyyy': ['105', '%d-%m-%Y'],
+                    'mm-dd-yyyy': ['110', '%m-%d-%Y'],
+                    'yyyy/mm/dd': ['111', '%Y/%m/%d'],
+                    'yyyy-mm-dd': ['23', '%Y-%m-%d'],
+                    'yyyy-dd-mm': ['31', '%Y-%d-%m'],
+                    'mm-yyyy-dd': ['33', '%m-%Y-%d'],
+                    'dd-yyyy-mm': ['35', '%d-%Y-%m']}
 
 # Relação tabela -> chave primária
 TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['hole_number'],

@@ -27,7 +27,7 @@ def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
             # Limpando nomes de colunas
             table.columns = __clean_table_column_names(table)
             if cbx_modify_cols_var == 1:
-                __get_autiting_cols(table)
+                __get_autiting_cols(table, date_convention[1])
             # Definição do comando SQL
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
@@ -46,18 +46,18 @@ def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1])
                     script.write(header)
-                    values_list = __get_values_list(table, i, date_convention)
+                    values_list = __get_values_list(table, i, date_convention[0])
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                 elif i == len(table):
-                    values_list = __get_values_list(table, i, date_convention)
+                    values_list = __get_values_list(table, i, date_convention[0])
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                     script.close()
                 else:
-                    values_list = __get_values_list(table, i, date_convention)
+                    values_list = __get_values_list(table, i, date_convention[0])
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
