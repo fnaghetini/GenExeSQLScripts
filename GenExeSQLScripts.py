@@ -31,7 +31,7 @@ cbx_modify_cols = Checkbutton(root, text="Create Fusion Audit Columns", bg='whit
 btn_insert_scripts = Button(root, text="Create INSERT Script(s)", width=20, justify=CENTER, cursor='hand2',
                             command=lambda: insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var.get()))
 btn_update_scripts = Button(root, text="Create UPDATE Script(s)", width=20, justify=CENTER, cursor='hand2',
-                            command=lambda: update_scripts(tbx_table, cbx_modify_cols_var.get()))
+                            command=lambda: update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var.get()))
 
 # Widgets - Execute SQL Scripts
 txt_title2 = Label(root, text="Execute SQL Scripts", bg='white', fg='black', font="lucida 12 bold")
