@@ -27,7 +27,8 @@ TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['hole_number'],
                           'UDEF_DHL_DENSITY_QAQC': ['sample_number'],
                           'UDEF_DHL_LOG_QAQC_MARK_LINE': ['hole_number', 'depth_from'],
                           'HOLE_ASSAY_STANDARDS': ['sample_number'],
-                          'sstn_surface_samples': ['sample_number']}
+                          'sstn_surface_samples': ['sample_number'],
+                          'UDEF_DHL_ALTERATION': ['hole_number', 'depth_from']}
 
 # Limite de linhas para scripts
 INSERT_SCRIPT_ROWS_LIMIT = 20_000

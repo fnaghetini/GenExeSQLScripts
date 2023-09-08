@@ -57,8 +57,8 @@ def __get_insert_script_row(input_table, cols_str, values_str):
 
 
 # Scripts de UPDATE
-def __get_update_values_cols_str(table, row_idx, cols_list):
-    values_list = __get_values_list(table, row_idx)
+def __get_update_values_cols_str(table, row_idx, cols_list, date_convention):
+    values_list = __get_values_list(table, row_idx, date_convention)
     cols_values_list = [f"{col} = {value}" for col, value in zip(cols_list, values_list)]
     cols_values_str = ''.join(map(str, cols_values_list))[:-1]
     return cols_values_str

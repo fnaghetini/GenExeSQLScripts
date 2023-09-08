@@ -64,10 +64,11 @@ def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
         messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
-def update_scripts(tbx_table, cbx_modify_cols_var):
+def update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = tbx_table.get("1.0", "end-1c")
+    date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
         messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
@@ -80,7 +81,7 @@ def update_scripts(tbx_table, cbx_modify_cols_var):
             # Limpando nomes de colunas
             table.columns = __clean_table_column_names(table)
             if cbx_modify_cols_var == 1:
-                __get_autiting_cols(table)
+                __get_autiting_cols(table, date_convention[1])
             # Definição do comando SQL
             cols_list = list(table.columns)
             # Criação do 1° script SQL
@@ -99,16 +100,16 @@ def update_scripts(tbx_table, cbx_modify_cols_var):
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1])
                     script.write(header)
-                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
+                    cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
                 elif i == len(table):
-                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
+                    cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
                     script.close()
                 else:
-                    cols_values_str = __get_update_values_cols_str(table, i, cols_list)
+                    cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
         messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
