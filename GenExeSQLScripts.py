@@ -1,7 +1,7 @@
 from tkinter import *
 from idlelib.tooltip import Hovertip
 from src.constants import DATE_CONVENTIONS
-from src.buttons import insert_scripts, update_scripts, insert_data_into_db
+from src.buttons import generate_insert_scripts, generate_update_scripts, insert_data_into_db
 
 
 ######################################################################################
@@ -18,7 +18,8 @@ txt_title1 = Label(root, text="Generate SQL Scripts", bg='white', fg='black', fo
 txt_table = Label(root, text="Table Name:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
 tbx_table = Text(root, height=1, width=30, bg='light yellow')
 
-txt_date_convention = Label(root, text="Date Convention:", width=30, bg='white', fg='black', justify=LEFT, anchor='w', padx=10)
+txt_date_convention = Label(root, text="Date Convention:", width=30, bg='white', fg='black',
+                            justify=LEFT, anchor='w', padx=10)
 date_convention_var = StringVar(root)
 date_convention_var.set("dd/mm/yyyy")
 pkl_date_convention = OptionMenu(root, date_convention_var, *list(DATE_CONVENTIONS.keys()))
@@ -29,9 +30,17 @@ cbx_modify_cols = Checkbutton(root, text="Create Fusion Audit Columns", bg='whit
                               variable=cbx_modify_cols_var)
 
 btn_insert_scripts = Button(root, text="Create INSERT Script(s)", width=20, justify=CENTER, cursor='hand2',
-                            command=lambda: insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var.get()))
+                            command=lambda: generate_insert_scripts(tbx_table,
+                                                                    date_convention_var,
+                                                                    cbx_modify_cols_var.get()
+                                                                    )
+                            )
 btn_update_scripts = Button(root, text="Create UPDATE Script(s)", width=20, justify=CENTER, cursor='hand2',
-                            command=lambda: update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var.get()))
+                            command=lambda: generate_update_scripts(tbx_table,
+                                                                    date_convention_var,
+                                                                    cbx_modify_cols_var.get()
+                                                                    )
+                            )
 
 # Widgets - Execute SQL Scripts
 txt_title2 = Label(root, text="Execute SQL Scripts", bg='white', fg='black', font="lucida 12 bold")

@@ -9,4 +9,3 @@ def __build_script_header(name):
 -- Script Name:       {name}\n\n\n"""
 
     return header
-

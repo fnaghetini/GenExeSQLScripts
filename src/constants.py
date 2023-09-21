@@ -11,24 +11,24 @@ DATE_CONVENTIONS = {'mm/dd/yyyy': ['101', '%m/%d/%Y'],
                     'mm-yyyy-dd': ['33', '%m-%Y-%d'],
                     'dd-yyyy-mm': ['35', '%d-%Y-%m']}
 
-# Relação tabela -> chave primária
-TABLE_KEY_RELATIONSHIP = {'DRILL_HOLE': ['hole_number'],
-                          'DRILL_HOLE_COORDINATE': ['hole_number', 'coord_type_code'],
-                          'DRILL_HOLE_DIRECTION': ['hole_number', 'depth', 'test_type_code'],
-                          'HOLE_ASSAY_SAMPLE': ['sample_number'],
-                          'HOLE_INTERVAL': ['hole_number', 'depth_from'],
-                          'UDEF_CORE_RECOVERY': ['hole_number', 'depth_from'],
-                          'UDEF_DHL_CORE_RECOVERY': ['hole_number', 'depth_from'],
-                          'UDEF_GEOLOGY': ['hole_number', 'depth_from'],
-                          'UDEF_DHL_GEOLOGY': ['hole_number', 'depth_from'],
-                          'UDEF_DHL_GEOTECNIC': ['hole_number', 'depth_from'],
-                          'UDEF_DHL_GEOTECHNIC': ['hole_number', 'depth_from'],
-                          'UDEF_DHL_DENSITY': ['hole_number', 'depth_from'],
-                          'UDEF_DHL_DENSITY_QAQC': ['hole_number', 'depth_from', 'assay_type'],
-                          'UDEF_DHL_LOG_QAQC_MARK_LINE': ['hole_number', 'depth_from'],
-                          'HOLE_ASSAY_STANDARDS': ['sample_number'],
+# Relação tabela -> chave
+TABLE_KEY_RELATIONSHIP = {'drill_hole': ['hole_number'],
+                          'drill_hole_coordinate': ['hole_number', 'coord_type_code'],
+                          'drill_hole_direction': ['hole_number', 'depth', 'test_type_code'],
+                          'hole_interval': ['hole_number', 'depth_from'],
+                          'hole_assay_sample': ['sample_number'],
+                          'hole_assay_standards': ['sample_number'],
                           'sstn_surface_samples': ['sample_number'],
-                          'UDEF_DHL_ALTERATION': ['hole_number', 'depth_from']}
+                          'udef_core_recovery': ['hole_number', 'depth_from'],
+                          'udef_dhl_core_recovery': ['hole_number', 'depth_from'],
+                          'udef_geology': ['hole_number', 'depth_from'],
+                          'udef_dhl_geology': ['hole_number', 'depth_from'],
+                          'udef_dhl_geotecnic': ['hole_number', 'depth_from'],
+                          'udef_dhl_geotechnic': ['hole_number', 'depth_from'],
+                          'udef_dhl_density': ['hole_number', 'depth_from'],
+                          'udef_dhl_density_qaqc': ['hole_number', 'depth_from', 'assay_type'],
+                          'udef_dhl_log_qaqc_mark_line': ['hole_number', 'depth_from'],
+                          'udef_dhl_alteration': ['hole_number', 'depth_from']}
 
 # Limite de linhas para scripts
 INSERT_SCRIPT_ROWS_LIMIT = 20_000

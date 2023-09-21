@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from src.constants import DATE_CONVENTIONS, INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
+from src.constants import DATE_CONVENTIONS, INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT, TABLE_KEY_RELATIONSHIP
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list
 from src.datainput import __read_csv, __clean_table_column_names
 from src.auditicolumnsbuilder import __get_auditing_cols
@@ -10,16 +10,18 @@ from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_scri
 from src.database import Database
 
 
-def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
+def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
-    input_table = tbx_table.get("1.0", "end-1c")
+    str(tbx_table.get("1.0", "end-1c")).lower()
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
-        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
+        messagebox.showerror('Erro', "Por favor, selecione um diretório!")
+        return
     elif len(input_files_list) == 0:
         messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+        return
     else:
         for file in input_files_list:
             # Importação da tabela
@@ -64,16 +66,19 @@ def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
         messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
 
 
-def update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
+def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
-    input_table = tbx_table.get("1.0", "end-1c")
+    input_table = str(tbx_table.get("1.0", "end-1c")).lower()
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
-        messagebox.showerror('Erro', "Por favor, preencha todos os campos!")
+        messagebox.showerror('Erro', "Por favor, selecione um diretório!")
     elif len(input_files_list) == 0:
         messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+    elif input_table not in list(TABLE_KEY_RELATIONSHIP.keys()):
+        messagebox.showerror('Erro', f"Não há nenhuma chave cadastrada para a tabela {input_table}. Contacte o admin.")
+        return
     else:
         for file in input_files_list:
             # Importação da tabela
