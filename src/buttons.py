@@ -34,7 +34,7 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
             n_script = 1
-            script_name = f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql"
+            script_name = f"{file[:-4]}_INSERT_pt{str(n_script).zfill(3)}.sql"
             script = open(script_name, 'w+')
             header = __build_script_header(script_name.rsplit('/', 1)[1])
             script.write(header)
@@ -44,7 +44,7 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                 if i not in [0, len(table)] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
                     script.close()
                     n_script += 1
-                    script_name = f"{file[:-4]}_INSERT_pt0{str(n_script)}.sql"
+                    script_name = f"{file[:-4]}_INSERT_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1])
                     script.write(header)
@@ -91,7 +91,7 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             cols_list = list(table.columns)
             # Criação do 1° script SQL
             n_script = 1
-            script_name = f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql"
+            script_name = f"{file[:-4]}_UPDATE_pt{str(n_script).zfill(3)}.sql"
             script = open(script_name, 'w+')
             header = __build_script_header(script_name.rsplit('/', 1)[1])
             script.write(header)
@@ -101,7 +101,7 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                 if i not in [0, len(table)] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
-                    script_name = f"{file[:-4]}_UPDATE_pt0{str(n_script)}.sql"
+                    script_name = f"{file[:-4]}_UPDATE_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1])
                     script.write(header)
