@@ -13,7 +13,7 @@ from src.database import Database
 def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
     folder_path = __select_directory()
     input_files_list = __get_input_files_list(folder_path, 'csv')
-    str(tbx_table.get("1.0", "end-1c")).lower()
+    input_table = str(tbx_table.get("1.0", "end-1c")).lower()
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
