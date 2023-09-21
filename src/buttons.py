@@ -2,7 +2,7 @@ from tkinter import messagebox
 from src.constants import DATE_CONVENTIONS, INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list
 from src.datainput import __read_csv, __clean_table_column_names
-from src.auditicolumnsbuilder import __get_autiting_cols
+from src.auditicolumnsbuilder import __get_auditing_cols
 from src.scriptheaderbuilder import __build_script_header
 from src.scriptrowbuilder import __get_values_list, __get_values_string
 from src.scriptrowbuilder import __get_insert_cols_str, __get_insert_script_row
@@ -27,7 +27,7 @@ def insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
             # Limpando nomes de colunas
             table.columns = __clean_table_column_names(table)
             if cbx_modify_cols_var == 1:
-                __get_autiting_cols(table, date_convention[1])
+                __get_auditing_cols(table, date_convention[1])
             # Definição do comando SQL
             cols_str = __get_insert_cols_str(table)
             # Criação do 1° script SQL
@@ -81,7 +81,7 @@ def update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
             # Limpando nomes de colunas
             table.columns = __clean_table_column_names(table)
             if cbx_modify_cols_var == 1:
-                __get_autiting_cols(table, date_convention[1])
+                __get_auditing_cols(table, date_convention[1])
             # Definição do comando SQL
             cols_list = list(table.columns)
             # Criação do 1° script SQL
