@@ -1,7 +1,7 @@
 from tkinter import *
 from idlelib.tooltip import Hovertip
 from src.constants import DATE_CONVENTIONS
-from src.buttons import generate_insert_scripts, generate_update_scripts, insert_data_into_db
+from src.buttons import generate_insert_scripts, generate_update_scripts, generate_delete_scripts, insert_data_into_db
 
 
 ######################################################################################
@@ -10,7 +10,7 @@ from src.buttons import generate_insert_scripts, generate_update_scripts, insert
 
 root = Tk()
 root.title("GenExeSQLScripts")
-root.geometry("500x480")
+root.geometry("500x515")
 root.configure(background='white')
 
 # Widgets - Generate SQL scripts
@@ -41,6 +41,11 @@ btn_update_scripts = Button(root, text="Create UPDATE Script(s)", width=20, just
                                                                     cbx_modify_cols_var.get()
                                                                     )
                             )
+
+btn_delete_scripts = Button(root, text="Create DELETE Script(s)", width=20, justify=CENTER, cursor='hand2',
+                            command=lambda: generate_delete_scripts(tbx_table)
+                            )
+
 
 # Widgets - Execute SQL Scripts
 txt_title2 = Label(root, text="Execute SQL Scripts", bg='white', fg='black', font="lucida 12 bold")
@@ -74,27 +79,28 @@ cbx_modify_cols.grid(row=3, column=0, columnspan=2, pady=10)
 
 btn_insert_scripts.grid(row=4, column=0, pady=10)
 btn_update_scripts.grid(row=4, column=1, pady=10)
+btn_delete_scripts.grid(row=5, column=0, columnspan=2, pady=10)
 
 # Widget position - Execute SQL Scripts
-txt_title2.grid(row=5, column=0, columnspan=2, pady=10)
-txt_driver.grid(row=6, column=0, pady=5, sticky=W)
-pkl_driver.grid(row=6, column=1)
-txt_server.grid(row=7, column=0, pady=5, sticky=W)
-tbx_server.grid(row=7, column=1)
-txt_db.grid(row=8, column=0, pady=5, sticky=W)
-tbx_db.grid(row=8, column=1)
-txt_user.grid(row=9, column=0, pady=5, sticky=W)
-tbx_user.grid(row=9, column=1)
-txt_pwd.grid(row=10, column=0, pady=5, sticky=W)
-tbx_pwd.grid(row=10, column=1)
-btn_insert_data.grid(row=11, column=0, columnspan=2, pady=10)
-txt_version.grid(row=12, column=1, sticky=E)
+txt_title2.grid(row=6, column=0, columnspan=2, pady=10)
+txt_driver.grid(row=7, column=0, pady=5, sticky=W)
+pkl_driver.grid(row=7, column=1)
+txt_server.grid(row=8, column=0, pady=5, sticky=W)
+tbx_server.grid(row=8, column=1)
+txt_db.grid(row=9, column=0, pady=5, sticky=W)
+tbx_db.grid(row=9, column=1)
+txt_user.grid(row=10, column=0, pady=5, sticky=W)
+tbx_user.grid(row=10, column=1)
+txt_pwd.grid(row=11, column=0, pady=5, sticky=W)
+tbx_pwd.grid(row=11, column=1)
+btn_insert_data.grid(row=12, column=0, columnspan=2, pady=10)
+txt_version.grid(row=13, column=1, sticky=E)
 
 # Tooltips
 tip_table = Hovertip(tbx_table, "Insert table name")
 tip_server = Hovertip(tbx_server, "Insert server name")
 tip_db = Hovertip(tbx_db, "Insert database name")
-tip_user = Hovertip(tbx_user, "Insert user name (Database Authentication)")
-tip_pwd = Hovertip(tbx_pwd, "Insert password (Database Authentication)")
+tip_user = Hovertip(tbx_user, "Insert user name (for Database Authentication)")
+tip_pwd = Hovertip(tbx_pwd, "Insert password (for Database Authentication)")
 
 root.mainloop()
