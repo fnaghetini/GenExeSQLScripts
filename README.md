@@ -1,5 +1,5 @@
-# Generate-Scripts
+# Generate & Execute SQL Scripts
 
-- Aplicativo que gera scripts T-SQL de **INSERT** e/ou **UPDATE** a partir de arquivos CSV de entrada (com nomenclatura de colunas igual a do Fusion).
+- Generate **INSERT**, **UPDATE** and **DELETE** T-SQL scripts from input CSV files.
 
-- Execução de scripts T-SQL no banco de dados Fusion selecionado (seja CENTRAL ou LOCAL).
+- Execute T-SQL scripts on selected Fusion database (either CENTRAL or LOCAL).
