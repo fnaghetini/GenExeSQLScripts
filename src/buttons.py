@@ -17,10 +17,10 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
-        messagebox.showerror('Erro', "Por favor, selecione um diretório!")
+        messagebox.showerror('Error', "Please choose a valid folder!")
         return
     elif len(input_files_list) == 0:
-        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+        messagebox.showerror('Error', f"There is no CSV file in {folder_path}.")
         return
     else:
         for file in input_files_list:
@@ -36,7 +36,7 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             n_script = 1
             script_name = f"{file[:-4]}_INSERT_pt{str(n_script).zfill(3)}.sql"
             script = open(script_name, 'w+')
-            header = __build_script_header(script_name.rsplit('/', 1)[1])
+            header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='INSERT')
             script.write(header)
 
             # Iteração sobre as linhas da tabela
@@ -63,7 +63,7 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
-        messagebox.showinfo('Processo Concluído', f'INSERT script(s) gerado(s) com sucesso na pasta {folder_path}.')
+        messagebox.showinfo('Process Finished', f'INSERT script(s) successfully generated in the folder {folder_path}.')
 
 
 def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
@@ -73,11 +73,11 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
     if folder_path == '':
-        messagebox.showerror('Erro', "Por favor, selecione um diretório!")
+        messagebox.showerror('Error', "Please choose a valid folder!")
     elif len(input_files_list) == 0:
-        messagebox.showerror('Erro', f"Não há arquivos .csv na pasta {folder_path}.")
+        messagebox.showerror('Error', f"There is no CSV file in {folder_path}.")
     elif input_table not in list(TABLE_KEY_RELATIONSHIP.keys()):
-        messagebox.showerror('Erro', f"Não há nenhuma chave cadastrada para a tabela {input_table}. Contacte o admin.")
+        messagebox.showerror('Error', f"There is no PK for {input_table}. Please contact admin to add the PK.")
         return
     else:
         for file in input_files_list:
@@ -93,7 +93,7 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             n_script = 1
             script_name = f"{file[:-4]}_UPDATE_pt{str(n_script).zfill(3)}.sql"
             script = open(script_name, 'w+')
-            header = __build_script_header(script_name.rsplit('/', 1)[1])
+            header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='UPDATE')
             script.write(header)
 
             # Iteração sobre as linhas da tabela
@@ -117,7 +117,7 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
-        messagebox.showinfo('Processo Concluído', f'UPDATE script(s) gerado(s) com sucesso na pasta {folder_path}.')
+        messagebox.showinfo('Process Finished', f'UPDATE script(s) successfully generated in the folder {folder_path}.')
         print(cbx_modify_cols_var)
 
 
@@ -142,11 +142,11 @@ def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd='')
                 with db.cursor() as cursor:
                     cursor.execute(statement)
 
-        print(f"Script {__get_path_leaf(script_file)} executado com sucesso! ({count}/{len(input_scripts_list)})")
+        print(f"Script {__get_path_leaf(script_file)} executed successfully! ({count}/{len(input_scripts_list)})")
 
         count += 1
 
     db.close_connection()
 
-    messagebox.showinfo('Processo Concluído',
-                        f'{len(input_scripts_list)} script(s) executado(s) com sucesso!')
+    messagebox.showinfo('Process Finished',
+                        f'{len(input_scripts_list)} script(s) executed successfully!')
