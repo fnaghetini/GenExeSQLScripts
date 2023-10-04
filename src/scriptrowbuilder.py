@@ -44,7 +44,7 @@ def __get_values_string(values_list):
     return ''.join(map(str, values_list))[:-1]
 
 
-# Scripts de INSERT
+# INSERT scripts
 def __get_insert_cols_str(table):
     cols_list = [f'[{col}],' for col in table.columns]
     cols_str = ''.join(map(str, cols_list))[:-1]
@@ -56,7 +56,7 @@ def __get_insert_script_row(input_table, cols_str, values_str):
     return row
 
 
-# Scripts de UPDATE
+# UPDATE scripts
 def __get_update_values_cols_str(table, row_idx, cols_list, date_convention):
     values_list = __get_values_list(table, row_idx, date_convention)
     cols_values_list = [f"{col} = {value}" for col, value in zip(cols_list, values_list)]
@@ -66,12 +66,25 @@ def __get_update_values_cols_str(table, row_idx, cols_list, date_convention):
 
 def __get_update_script_row(input_table, cols_values_str, df, row_idx):
     key = TABLE_KEY_RELATIONSHIP[input_table]
-    # Chave primária
+    # PK
     if len(key) == 1:
         row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{df.loc[row_idx, key[0]]}';\n"""
-    # Chave composta
+    # CK
     elif len(key) == 2:
         row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{df.loc[row_idx, key[0]]}' AND {key[1]} = '{df.loc[row_idx, key[1]]}';\n"""
     elif len(key) == 3:
         row = f"""UPDATE {input_table} SET {cols_values_str}\nWHERE {key[0]} = '{df.loc[row_idx, key[0]]}' AND {key[1]} = '{df.loc[row_idx, key[1]]}' AND {key[2]} = '{df.loc[row_idx, key[2]]}';\n"""
+    return row
+
+
+def __get_delete_script_row(input_table, df, row_idx):
+    key = TABLE_KEY_RELATIONSHIP[input_table]
+    # PK
+    if len(key) == 1:
+        row = f"""DELETE FROM {input_table} WHERE {key[0]} = '{df.loc[row_idx, key[0]]}';\n"""
+    # CK
+    elif len(key) == 2:
+        row = f"""DELETE FROM {input_table} WHERE {key[0]} = '{df.loc[row_idx, key[0]]}' AND {key[1]} = '{df.loc[row_idx, key[1]]}';\n"""
+    elif len(key) == 3:
+        row = f"""DELETE FROM {input_table} WHERE {key[0]} = '{df.loc[row_idx, key[0]]}' AND {key[1]} = '{df.loc[row_idx, key[1]]}' AND {key[2]} = '{df.loc[row_idx, key[2]]}';\n"""
     return row

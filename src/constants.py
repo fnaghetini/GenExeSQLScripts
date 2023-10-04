@@ -33,3 +33,4 @@ TABLE_KEY_RELATIONSHIP = {'drill_hole': ['hole_number'],
 # Limite de linhas para scripts
 INSERT_SCRIPT_ROWS_LIMIT = 20_000
 UPDATE_SCRIPT_ROWS_LIMIT = 10_000
+DELETE_SCRIPT_ROWS_LIMIT = 10_000
