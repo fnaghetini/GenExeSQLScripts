@@ -1,5 +1,6 @@
 from tkinter import messagebox
-from src.constants import DATE_CONVENTIONS, INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT, TABLE_KEY_RELATIONSHIP
+from src.constants import DATE_CONVENTIONS, TABLE_KEY_RELATIONSHIP
+from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT, DELETE_SCRIPT_ROWS_LIMIT
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list
 from src.datainput import __read_csv, __clean_table_column_names
 from src.auditicolumnsbuilder import __get_auditing_cols
@@ -7,6 +8,7 @@ from src.scriptheaderbuilder import __build_script_header
 from src.scriptrowbuilder import __get_values_list, __get_values_string
 from src.scriptrowbuilder import __get_insert_cols_str, __get_insert_script_row
 from src.scriptrowbuilder import __get_update_values_cols_str, __get_update_script_row
+from src.scriptrowbuilder import __get_delete_script_row
 from src.database import Database
 
 
@@ -24,29 +26,28 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
         return
     else:
         for file in input_files_list:
-            # Importação da tabela
             table = __read_csv(file)
-            # Limpando nomes de colunas
+
             table.columns = __clean_table_column_names(table)
+
             if cbx_modify_cols_var == 1:
                 __get_auditing_cols(table, date_convention[1])
-            # Definição do comando SQL
+
             cols_str = __get_insert_cols_str(table)
-            # Criação do 1° script SQL
+
             n_script = 1
             script_name = f"{file[:-4]}_INSERT_pt{str(n_script).zfill(3)}.sql"
             script = open(script_name, 'w+')
             header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='INSERT')
             script.write(header)
 
-            # Iteração sobre as linhas da tabela
             for i in range(len(table)):
                 if i not in [0, len(table)] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
                     script.close()
                     n_script += 1
                     script_name = f"{file[:-4]}_INSERT_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
-                    header = __build_script_header(script_name.rsplit('/', 1)[1])
+                    header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='INSERT')
                     script.write(header)
                     values_list = __get_values_list(table, i, date_convention[0])
                     values_str = __get_values_string(values_list)
@@ -81,29 +82,28 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
         return
     else:
         for file in input_files_list:
-            # Importação da tabela
             table = __read_csv(file)
-            # Limpando nomes de colunas
+
             table.columns = __clean_table_column_names(table)
+
             if cbx_modify_cols_var == 1:
                 __get_auditing_cols(table, date_convention[1])
-            # Definição do comando SQL
+
             cols_list = list(table.columns)
-            # Criação do 1° script SQL
+
             n_script = 1
             script_name = f"{file[:-4]}_UPDATE_pt{str(n_script).zfill(3)}.sql"
             script = open(script_name, 'w+')
             header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='UPDATE')
             script.write(header)
 
-            # Iteração sobre as linhas da tabela
             for i in range(len(table)):
                 if i not in [0, len(table)] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
                     script_name = f"{file[:-4]}_UPDATE_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
-                    header = __build_script_header(script_name.rsplit('/', 1)[1])
+                    header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='UPDATE')
                     script.write(header)
                     cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
@@ -118,7 +118,52 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
         messagebox.showinfo('Process Finished', f'UPDATE script(s) successfully generated in the folder {folder_path}.')
-        print(cbx_modify_cols_var)
+
+
+def generate_delete_scripts(tbx_table):
+    folder_path = __select_directory()
+    input_files_list = __get_input_files_list(folder_path, 'csv')
+    input_table = str(tbx_table.get("1.0", "end-1c")).lower()
+
+    if folder_path == '':
+        messagebox.showerror('Error', "Please choose a valid folder!")
+    elif len(input_files_list) == 0:
+        messagebox.showerror('Error', f"There is no CSV file in {folder_path}.")
+    elif input_table not in list(TABLE_KEY_RELATIONSHIP.keys()):
+        messagebox.showerror('Error', f"There is no PK for {input_table}. Please contact admin to add the PK.")
+        return
+    else:
+        for file in input_files_list:
+            table = __read_csv(file)
+
+            table.columns = __clean_table_column_names(table)
+
+            cols_list = list(table.columns)
+
+            n_script = 1
+            script_name = f"{file[:-4]}_DELETE_pt{str(n_script).zfill(3)}.sql"
+            script = open(script_name, 'w+')
+            header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='DELETE')
+            script.write(header)
+
+            for i in range(len(table)):
+                if i not in [0, len(table)] and i % DELETE_SCRIPT_ROWS_LIMIT == 0:
+                    n_script += 1
+                    script.close()
+                    script_name = f"{file[:-4]}_DELETE_pt{str(n_script).zfill(3)}.sql"
+                    script = open(script_name, 'w+')
+                    header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='DELETE')
+                    script.write(header)
+                    row = __get_delete_script_row(input_table, table, i)
+                    script.write(row)
+                elif i == len(table):
+                    row = __get_delete_script_row(input_table, table, i)
+                    script.write(row)
+                    script.close()
+                else:
+                    row = __get_delete_script_row(input_table, table, i)
+                    script.write(row)
+        messagebox.showinfo('Process Finished', f'DELETE script(s) successfully generated in the folder {folder_path}.')
 
 
 def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd=''):
