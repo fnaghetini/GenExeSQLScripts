@@ -1,8 +1,10 @@
 from tkinter import messagebox
+from src.constants import GENERATE_SCRIPTS_LOG_PATH, EXECUTE_SCRIPTS_LOG_PATH
 from src.constants import DATE_CONVENTIONS, TABLE_KEY_RELATIONSHIP
 from src.constants import INSERT_SCRIPT_ROWS_LIMIT, UPDATE_SCRIPT_ROWS_LIMIT, DELETE_SCRIPT_ROWS_LIMIT
 from src.datainput import __get_path_leaf, __select_directory, __get_input_files_list
 from src.datainput import __read_csv, __clean_table_column_names
+from src.log import Log
 from src.auditicolumnsbuilder import __get_auditing_cols
 from src.scriptheaderbuilder import __build_script_header
 from src.scriptrowbuilder import __get_values_list, __get_values_string
@@ -18,16 +20,19 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
     input_table = str(tbx_table.get("1.0", "end-1c")).lower()
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
+    log = Log(GENERATE_SCRIPTS_LOG_PATH)
+    log.show_progress_message('GENERATING INSERT SCRIPTS...\n')
+    log.display_date()
+
     if folder_path == '':
-        messagebox.showerror('Error', "Please choose a valid folder!")
+        log.show_error_message('Please choose a valid folder!')
         return
     elif len(input_files_list) == 0:
-        messagebox.showerror('Error', f"There is no CSV file in {folder_path}.")
+        log.show_error_message(f'There is no CSV file in {folder_path}')
         return
     else:
         for file in input_files_list:
             table = __read_csv(file)
-
             table.columns = __clean_table_column_names(table)
 
             if cbx_modify_cols_var == 1:
@@ -44,6 +49,8 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             for i in range(len(table)):
                 if i not in [0, len(table)] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
                     script.close()
+                    log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
+                                              display_time=True)
                     n_script += 1
                     script_name = f"{file[:-4]}_INSERT_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
@@ -59,12 +66,17 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
                     script.close()
+                    log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
+                                              display_time=True)
                 else:
                     values_list = __get_values_list(table, i, date_convention[0])
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
-        messagebox.showinfo('Process Finished', f'INSERT script(s) successfully generated in the folder {folder_path}.')
+
+        log.display_execution_time(full_exec_time=True)
+        log.show_completion_message(f'INSERT script(s) successfully generated in the folder {folder_path}.')
+        log.close_logfile()
 
 
 def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var):
@@ -73,17 +85,20 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
     input_table = str(tbx_table.get("1.0", "end-1c")).lower()
     date_convention = DATE_CONVENTIONS[date_convention_var.get()]
 
+    log = Log(GENERATE_SCRIPTS_LOG_PATH)
+    log.show_progress_message('GENERATING UPDATE SCRIPTS...\n')
+    log.display_date()
+
     if folder_path == '':
-        messagebox.showerror('Error', "Please choose a valid folder!")
+        log.show_error_message('Please choose a valid folder!')
     elif len(input_files_list) == 0:
-        messagebox.showerror('Error', f"There is no CSV file in {folder_path}.")
+        log.show_error_message(f'There is no CSV file in {folder_path}')
     elif input_table not in list(TABLE_KEY_RELATIONSHIP.keys()):
-        messagebox.showerror('Error', f"There is no PK for {input_table}. Please contact admin to add the PK.")
+        log.show_error_message(f"There is no PK for {input_table}. Please contact admin to add the PK.")
         return
     else:
         for file in input_files_list:
             table = __read_csv(file)
-
             table.columns = __clean_table_column_names(table)
 
             if cbx_modify_cols_var == 1:
@@ -101,6 +116,8 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                 if i not in [0, len(table)] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
+                    log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
+                                              display_time=True)
                     script_name = f"{file[:-4]}_UPDATE_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='UPDATE')
@@ -113,11 +130,15 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
                     script.close()
+                    log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
+                                              display_time=True)
                 else:
                     cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
-        messagebox.showinfo('Process Finished', f'UPDATE script(s) successfully generated in the folder {folder_path}.')
+        log.display_execution_time(full_exec_time=True)
+        log.show_completion_message(f'UPDATE script(s) successfully generated in the folder {folder_path}.')
+        log.close_logfile()
 
 
 def generate_delete_scripts(tbx_table):
@@ -125,20 +146,21 @@ def generate_delete_scripts(tbx_table):
     input_files_list = __get_input_files_list(folder_path, 'csv')
     input_table = str(tbx_table.get("1.0", "end-1c")).lower()
 
+    log = Log(GENERATE_SCRIPTS_LOG_PATH)
+    log.show_progress_message('GENERATING INSERT SCRIPTS...\n')
+    log.display_date()
+
     if folder_path == '':
-        messagebox.showerror('Error', "Please choose a valid folder!")
+        log.show_error_message('Please choose a valid folder!')
     elif len(input_files_list) == 0:
-        messagebox.showerror('Error', f"There is no CSV file in {folder_path}.")
+        log.show_error_message(f'There is no CSV file in {folder_path}')
     elif input_table not in list(TABLE_KEY_RELATIONSHIP.keys()):
-        messagebox.showerror('Error', f"There is no PK for {input_table}. Please contact admin to add the PK.")
+        log.show_error_message(f"There is no PK for {input_table}. Please contact admin to add the PK.")
         return
     else:
         for file in input_files_list:
             table = __read_csv(file)
-
             table.columns = __clean_table_column_names(table)
-
-            cols_list = list(table.columns)
 
             n_script = 1
             script_name = f"{file[:-4]}_DELETE_pt{str(n_script).zfill(3)}.sql"
@@ -150,6 +172,8 @@ def generate_delete_scripts(tbx_table):
                 if i not in [0, len(table)] and i % DELETE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
+                    log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
+                                              display_time=True)
                     script_name = f"{file[:-4]}_DELETE_pt{str(n_script).zfill(3)}.sql"
                     script = open(script_name, 'w+')
                     header = __build_script_header(script_name.rsplit('/', 1)[1], script_type='DELETE')
@@ -160,17 +184,26 @@ def generate_delete_scripts(tbx_table):
                     row = __get_delete_script_row(input_table, table, i)
                     script.write(row)
                     script.close()
+                    log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
+                                              display_time=True)
                 else:
                     row = __get_delete_script_row(input_table, table, i)
                     script.write(row)
-        messagebox.showinfo('Process Finished', f'DELETE script(s) successfully generated in the folder {folder_path}.')
+        log.display_execution_time(full_exec_time=True)
+        log.show_completion_message(f'DELETE script(s) successfully generated in the folder {folder_path}.')
+        log.close_logfile()
 
 
 def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd=''):
     folder_path = __select_directory()
     input_scripts_list = __get_input_files_list(folder_path, 'sql')
 
-    db = Database(driver_var.get(),
+    log = Log(EXECUTE_SCRIPTS_LOG_PATH)
+    log.show_progress_message('EXECUTING SQL SCRIPTS...\n')
+    log.display_date()
+
+    db = Database(log,
+                  driver_var.get(),
                   tbx_server.get("1.0", "end-1c"),
                   tbx_db.get("1.0", "end-1c"),
                   tbx_user.get("1.0", "end-1c"),
@@ -181,17 +214,20 @@ def insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user='', tbx_pwd='')
     count = 1
 
     for script_file in input_scripts_list:
+        reseted_start_time = log.reset_start_time()
         with open(script_file, 'r') as inserts:
             script = inserts.read()
             for statement in script.split(';'):
                 with db.cursor() as cursor:
                     cursor.execute(statement)
 
-        print(f"Script {__get_path_leaf(script_file)} executed successfully! ({count}/{len(input_scripts_list)})")
+        log.show_progress_message(f'\nScript {__get_path_leaf(script_file)} executed successfully! ({count}/{len(input_scripts_list)})')
+        log.display_execution_time(new_start_time=reseted_start_time)
 
         count += 1
 
     db.close_connection()
 
-    messagebox.showinfo('Process Finished',
-                        f'{len(input_scripts_list)} script(s) executed successfully!')
+    log.display_execution_time(full_exec_time=True)
+    log.show_completion_message(f'{len(input_scripts_list)} script(s) executed successfully!')
+    log.close_logfile()
