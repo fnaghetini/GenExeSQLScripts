@@ -65,7 +65,7 @@ tbx_pwd = Text(root, height=1, width=30, bg='white')
 
 btn_insert_data = Button(root, text="Execute Script(s)", width=20, justify=CENTER, cursor='hand2',
                          command=lambda: insert_data_into_db(driver_var, tbx_server, tbx_db, tbx_user, tbx_pwd))
-txt_version = Label(root, text="v0.1.0", bg='white', fg='black', justify=RIGHT, anchor='e')
+txt_version = Label(root, text="v0.1.1", bg='white', fg='black', justify=RIGHT, anchor='e')
 
 # Widget position - Generate SQL Scripts
 txt_title1.grid(row=0, column=0, columnspan=2, pady=10)
