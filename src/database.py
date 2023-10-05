@@ -1,9 +1,9 @@
 import pyodbc as odbc
-from tkinter import messagebox
 
 
 class Database:
-    def __init__(self, driver, server, database, user='', pwd=''):
+    def __init__(self, log, driver, server, database, user='', pwd=''):
+        self.log = log
         self.driver = driver
         self.server = server
         self.database = database
@@ -26,17 +26,22 @@ class Database:
                             f"PWD={self.pwd};"
                         )
         else:
-            messagebox.showerror('Erro', 'Verifique se as informações estão corretamente preenchidas.')
-            raise Exception('Erro ao conectar com o banco.')
+            self.log.show_error_message('Please enter valid database information.')
+
         self.conn = odbc.connect(conn_data)
 
     def open_connection(self):
-        print(f"Conexão bem sucedida com o banco {self.database}!")
+        self.log.show_progress_message(f'\nSuccessful database connection!', display_time=True)
+        self.log.show_progress_message(f'Driver:   {self.driver}')
+        self.log.show_progress_message(f'Server:   {self.server}')
+        self.log.show_progress_message(f'Database: {self.database}')
+        self.log.show_progress_message(f'User:     {self.user}')
+        self.log.display_date()
         return self
 
     def cursor(self):
         return self.conn.cursor()
 
     def close_connection(self):
-        print(f"Conexão com o banco {self.database} encerrada!")
+        self.log.show_progress_message(f'\nDatabase connection closed!\n')
         return self.conn.close()
