@@ -47,7 +47,7 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             script.write(header)
 
             for i in range(len(table)):
-                if i not in [0, len(table)] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
+                if i not in [0, len(table)-1] and i % INSERT_SCRIPT_ROWS_LIMIT == 0:
                     script.close()
                     log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
                                               display_time=True)
@@ -60,7 +60,7 @@ def generate_insert_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
                     script.write(row)
-                elif i == len(table):
+                elif i == len(table)-1:
                     values_list = __get_values_list(table, i, date_convention[0])
                     values_str = __get_values_string(values_list)
                     row = __get_insert_script_row(input_table, cols_str, values_str)
@@ -113,7 +113,7 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
             script.write(header)
 
             for i in range(len(table)):
-                if i not in [0, len(table)] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
+                if i not in [0, len(table)-1] and i % UPDATE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
                     log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
@@ -125,7 +125,7 @@ def generate_update_scripts(tbx_table, date_convention_var, cbx_modify_cols_var)
                     cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
-                elif i == len(table):
+                elif i == len(table)-1:
                     cols_values_str = __get_update_values_cols_str(table, i, cols_list, date_convention[0])
                     row = __get_update_script_row(input_table, cols_values_str, table, i)
                     script.write(row)
@@ -169,7 +169,7 @@ def generate_delete_scripts(tbx_table):
             script.write(header)
 
             for i in range(len(table)):
-                if i not in [0, len(table)] and i % DELETE_SCRIPT_ROWS_LIMIT == 0:
+                if i not in [0, len(table)-1] and i % DELETE_SCRIPT_ROWS_LIMIT == 0:
                     n_script += 1
                     script.close()
                     log.show_progress_message(f"\nScript {script_name.rsplit('/', 1)[1]} generated successfully.",
@@ -180,7 +180,7 @@ def generate_delete_scripts(tbx_table):
                     script.write(header)
                     row = __get_delete_script_row(input_table, table, i)
                     script.write(row)
-                elif i == len(table):
+                elif i == len(table)-1:
                     row = __get_delete_script_row(input_table, table, i)
                     script.write(row)
                     script.close()
