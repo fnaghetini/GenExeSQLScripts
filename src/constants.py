@@ -32,7 +32,8 @@ TABLE_KEY_RELATIONSHIP = {'drill_hole': ['hole_number'],
                           'udef_dhl_density': ['hole_number', 'depth_from'],
                           'udef_dhl_density_qaqc': ['hole_number', 'depth_from', 'assay_type'],
                           'udef_dhl_log_qaqc_mark_line': ['hole_number', 'depth_from'],
-                          'udef_dhl_alteration': ['hole_number', 'depth_from']}
+                          'udef_dhl_alteration': ['hole_number', 'depth_from'],
+                          'udef_dhl_mag_sus': ['hole_number', 'depth_from']}
 
 # Row limits for script types
 INSERT_SCRIPT_ROWS_LIMIT = 20_000
